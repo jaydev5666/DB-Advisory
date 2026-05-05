@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DB Advisory & Research</title>
+    <link rel="stylesheet" href="./style.css" />
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Global Header -->
+    <header class="landing-header">
+        <div class="logo" style="cursor: pointer;" onclick="goHome()">
+            <i data-lucide="bar-chart-4"></i>
+            <h2>DB Advisory <span>& Research</span></h2>
+        </div>
+        <nav class="landing-nav">
+            <a href="index.html" class="active" onclick="goHome(); return false;">Home</a>
+            <a href="services.html">Services</a>
+            <a href="about.html">About</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">Dashboard</button>
+            <button class="btn" style="color: #fff; background: transparent;" onclick="goHome()">Sign out</button>
+        </div>
+    </header>
+
+    <!-- Landing Screen -->
+    <div id="landing-screen" class="screen">
+
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="tag"><i data-lucide="zap"></i> AI-Powered Deal Intelligence</div>
+                <h1 class="hero-title">Institutional-grade<br><span style="color: var(--primary);">deal intelligence</span> in<br>seconds.</h1>
+                <p class="hero-subtitle">AI-driven research for IPOs, M&A, FPOs and block deals. Comparable companies, valuation insights, bank matrix and exportable pitchbooks — all in one platform.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">Analyze a Deal <i data-lucide="arrow-right"></i></button>
+                    <button class="btn btn-secondary">Explore platform</button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat"><h3>4+</h3><p>DEAL TYPES</p></div>
+                    <div class="stat"><h3 style="color: var(--primary);">Live</h3><p>PEER MULTIPLES</p></div>
+                    <div class="stat"><h3 style="color: var(--primary);">Top 20</h3><p>BANK COVERAGE</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="features-header">
+                <h2>Everything an analyst needs</h2>
+                <p>Built by IB practitioners. Designed for deal teams.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card glass">
+                    <div class="icon-box"><i data-lucide="bar-chart"></i></div>
+                    <h3>Deal Intelligence</h3>
+                    <p>Structured AI write-ups across IPO, M&A, FPO and block deals with industry context.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon-box"><i data-lucide="trending-up"></i></div>
+                    <h3>Valuation & Comps</h3>
+                    <p>Comparable companies with EV/Revenue, EV/EBITDA and P/E multiples in one click.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon-box"><i data-lucide="building-2"></i></div>
+                    <h3>Bank Matrix</h3>
+                    <p>ECM rankings, sector strength and deal probability scoring across top global banks.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon-box"><i data-lucide="file-spreadsheet"></i></div>
+                    <h3>Excel & PPT Export</h3>
+                    <p>Generate pitchbook-ready slides and downloadable models in seconds.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon-box"><i data-lucide="shield"></i></div>
+                    <h3>Enterprise Security</h3>
+                    <p>Authentication, encrypted data, and per-user research history.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon-box"><i data-lucide="cpu"></i></div>
+                    <h3>AI-Powered</h3>
+                    <p>Powered by frontier models with structured-output guarantees for reliable analysis.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="cta-box glass">
+                <h2>Ready to accelerate your deal workflow?</h2>
+                <p>Sign up free and run your first deal analysis in under a minute.</p>
+                <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">Get started <i data-lucide="arrow-right"></i></button>
+            </div>
+        </section>
+
+        <footer class="landing-footer">
+            <div class="footer-col">
+                <h3>DB Advisory & Research</h3>
+                <p>AI-driven deal intelligence for capital markets.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Platform</h4>
+                <a href="dashboard.html">Deal Analyzer</a>
+                <a href="services.html">Services</a>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <p>© 2026 DB Advisory & Research. For research purposes only. Not investment advice.</p>
+            </div>
+        </footer>
+    </div>
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
