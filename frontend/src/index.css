@@ -511,3 +511,125 @@ td {
 .clickable-card:hover h4 {
   color: var(--primary);
 }
+
+/* --- Mobile Responsiveness --- */
+
+@media (max-width: 1200px) {
+  .hero-section > div {
+    gap: 40px !important;
+  }
+  .hero-title {
+    font-size: 56px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .landing-header {
+    padding: 15px 30px;
+  }
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .db-sidebar {
+    width: 80px;
+    padding: 20px 10px;
+    align-items: center;
+  }
+  .db-sidebar h2, .db-sidebar span {
+    display: none;
+  }
+  .nav-item {
+    justify-content: center;
+    padding: 15px;
+  }
+  .nav-item span {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section > div {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 60px !important;
+  }
+  .hero-title {
+    font-size: 42px !important;
+  }
+  .hero-subtitle {
+    margin: 0 auto 32px !important;
+  }
+  .hero-buttons {
+    justify-content: center;
+  }
+  .hero-stats {
+    justify-content: center;
+    gap: 40px;
+  }
+  .landing-nav {
+    display: none; /* Hide nav links on mobile for simplicity, or we'd need a menu */
+  }
+  .features-grid {
+    grid-template-columns: 1fr;
+    margin: 40px 20px;
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  .results-grid .full-width {
+    grid-column: span 1;
+  }
+  .login-container {
+    width: 90%;
+    height: auto;
+  }
+  .input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .db-layout {
+    flex-direction: column;
+  }
+  .db-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .db-main {
+    padding: 20px;
+  }
+  .nav-item {
+    margin-bottom: 0;
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+  .table-container {
+    overflow-x: auto;
+  }
+  .footer-col {
+    margin-bottom: 30px;
+  }
+  .landing-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 32px !important;
+  }
+  .hero-buttons {
+    flex-direction: column;
+  }
+  .btn {
+    width: 100%;
+  }
+}
