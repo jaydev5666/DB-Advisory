@@ -7,3 +7,4 @@ python-pptx
 openai
 gunicorn
 python-dotenv
+pymongo
