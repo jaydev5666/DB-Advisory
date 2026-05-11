@@ -238,7 +238,6 @@ const Dashboard = () => {
                     <a onClick={() => navigate('/')}>Home</a>
                     <a onClick={() => navigate('/services')}>Services</a>
                     <a onClick={() => navigate('/about')}>About</a>
-                    <a onClick={() => navigate('/pricing')}>Pricing</a>
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>
                 <div className="header-actions">
@@ -254,9 +253,6 @@ const Dashboard = () => {
                         </a>
                         <a className={`nav-item ${view === 'history' ? 'active' : ''}`} onClick={() => setView('history')}>
                             <History size={20} /> History
-                        </a>
-                        <a className="nav-item" onClick={() => navigate('/pricing')}>
-                            <CreditCard size={20} /> Pricing
                         </a>
                     </nav>
                     <div className="sidebar-footer" style={{ marginTop: 'auto' }}>

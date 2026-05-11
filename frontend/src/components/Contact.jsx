@@ -35,7 +35,6 @@ const Contact = () => {
                     <a onClick={() => navigate('/')}>Home</a>
                     <a onClick={() => navigate('/services')}>Services</a>
                     <a onClick={() => navigate('/about')}>About</a>
-                    <a onClick={() => navigate('/pricing')}>Pricing</a>
                     <a className="active">Contact</a>
                 </nav>
                 <div className="header-actions">

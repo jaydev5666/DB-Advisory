@@ -62,7 +62,6 @@ const Services = () => {
                     <a onClick={() => navigate('/')}>Home</a>
                     <a className="active">Services</a>
                     <a onClick={() => navigate('/about')}>About</a>
-                    <a onClick={() => navigate('/pricing')}>Pricing</a>
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>
                 <div className="header-actions">
