@@ -6,11 +6,220 @@ import {
     Globe, Shield
 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
-import { api } from '../services/api';
+import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol, CURRENCY_MAP } from '../services/api';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    BarChart, Bar, Cell
+    AreaChart, Area,
+    LineChart, Line,
+    BarChart, Bar, Cell,
+    XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
+
+const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStockCurrency }) => {
+    const [period, setPeriod]           = useState('1Y');
+    const [data, setData]               = useState(initialData);
+    const [loading, setLoading]         = useState(false);
+    const [stockCurrency, setStockCurrency] = useState(initialStockCurrency || (() => {
+        // Detect from company name on first render
+        const u = (company || '').toUpperCase();
+        if (u.includes('.NS') || u.includes('.BO')) return 'INR';
+        if (u.includes('.L')) return 'GBP';
+        return 'USD';
+    }));
+    
+    const userCode = currencyInfo?.code || 'USD';
+    const [displayCurrency, setDisplayCurrency] = useState(userCode);
+
+    // Sync initialData changes
+    useEffect(() => {
+        if (initialData) {
+            setData(initialData);
+        }
+    }, [initialData]);
+
+    // Sync currencyInfo (geolocation detection) changes
+    useEffect(() => {
+        if (currencyInfo && currencyInfo.code) {
+            setDisplayCurrency(currencyInfo.code);
+        }
+    }, [currencyInfo]);
+
+    // Sync initialStockCurrency/company ticker updates
+    useEffect(() => {
+        if (initialStockCurrency) {
+            setStockCurrency(initialStockCurrency);
+        } else if (company) {
+            const u = company.toUpperCase();
+            if (u.includes('.NS') || u.includes('.BO') || u.includes('RELIANCE') || u.includes('TCS') || u.includes('INFY') || u.includes('WIPRO')) {
+                setStockCurrency('INR');
+            } else if (u.includes('.L')) {
+                setStockCurrency('GBP');
+            } else {
+                setStockCurrency('USD');
+            }
+        }
+    }, [initialStockCurrency, company]);
+
+    // Universal multi-currency rate calculation
+    const getDisplayRate = () => {
+        const fromRate = rates?.[stockCurrency] || 1;
+        const toRate = rates?.[displayCurrency] || 1;
+        return toRate / fromRate;
+    };
+
+    const displayRate = getDisplayRate();
+    const sym = getCurrencySymbol(displayCurrency);
+
+    const fmt = (val) => {
+        if (!val || isNaN(val)) return `${sym}0.00`;
+        return `${sym}${(parseFloat(val) * displayRate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    };
+
+    const handlePeriodChange = async (p) => {
+        if (p === period) return;
+        setPeriod(p);
+        setLoading(true);
+        try {
+            const res = await api.getChartData(company, p);
+            const payload = res.data;
+            const chartArr = payload?.data || (Array.isArray(payload) ? payload : []);
+            const nativeCur = payload?.currency || stockCurrency;
+            if (chartArr.length > 0) { setData(chartArr); setStockCurrency(nativeCur); }
+        } catch (e) { console.error(e); }
+        finally { setLoading(false); }
+    };
+
+    if (!data || data.length === 0) return null;
+
+    const converted = data.map(d => ({ ...d, price: parseFloat((d.price * displayRate).toFixed(2)) }));
+    const first = converted[0]?.price ?? 0;
+    const last  = converted[converted.length - 1]?.price ?? 0;
+    const isUp  = last >= first;
+    const change    = (last - first).toFixed(2);
+    const changePct = first > 0 ? ((last - first) / first * 100).toFixed(2) : '0.00';
+    const chartColor = isUp ? '#16c784' : '#ea3943';
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (!active || !payload?.length) return null;
+        return (
+            <div style={{ background:'rgba(10,12,18,0.92)', border:`1px solid ${chartColor}44`, borderRadius:'10px', padding:'10px 16px', backdropFilter:'blur(8px)' }}>
+                <div style={{ color: chartColor, fontWeight: 700, fontSize: '15px' }}>
+                    {sym}{Number(payload[0].value).toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 })}
+                </div>
+                <div style={{ color: '#8b95a5', fontSize: '11px', marginTop: '2px' }}>{label}</div>
+            </div>
+        );
+    };
+
+    return (
+        <div className="card glass full-width" style={{ padding:'28px 28px 20px', position:'relative' }}>
+            {loading && (
+                <div style={{ position:'absolute', inset:0, background:'rgba(255,255,255,0.5)', zIndex:10, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'12px', backdropFilter:'blur(2px)' }}>
+                    <div className="spinner" style={{ width:'24px', height:'24px', borderWidth:'3px' }}></div>
+                </div>
+            )}
+            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'20px' }}>
+                <div>
+                    <div style={{ fontSize:'13px', color:'var(--text-muted)', fontWeight:500, letterSpacing:'0.05em', textTransform:'uppercase' }}>
+                        {company} · Price Performance
+                        {currencyInfo && currencyInfo.code !== 'USD' && (
+                            <span style={{ marginLeft:'8px', background:'var(--surface-dim)', padding:'2px 8px', borderRadius:'4px', fontSize:'10px' }}>
+                                {currencyInfo.code}
+                            </span>
+                        )}
+                    </div>
+                    <div style={{ display:'flex', alignItems:'baseline', gap:'12px', marginTop:'6px' }}>
+                        <span style={{ fontSize:'32px', fontWeight:700, letterSpacing:'-0.5px', color:'var(--text)' }}>
+                            {sym}{Number(last).toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 })}
+                        </span>
+                        <span style={{ fontSize:'14px', fontWeight:600, color:chartColor, background:`${chartColor}18`, padding:'3px 10px', borderRadius:'20px' }}>
+                            {isUp ? '▲' : '▼'} {Math.abs(change)} ({Math.abs(changePct)}%)
+                        </span>
+                    </div>
+                    <div style={{ fontSize:'12px', color:'var(--text-muted)', marginTop:'4px' }}>
+                        vs. start of period · Open: {fmt(data[0]?.price)}
+                    </div>
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'8px' }}>
+                    {/* Currency Dropdown Selector */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>Currency:</span>
+                        <select
+                            value={displayCurrency}
+                            onChange={(e) => setDisplayCurrency(e.target.value)}
+                            style={{
+                                padding: '4px 24px 4px 10px',
+                                borderRadius: '16px',
+                                fontSize: '11px',
+                                fontWeight: '700',
+                                border: '1px solid var(--border)',
+                                background: '#eff6ff',
+                                color: '#2563eb',
+                                cursor: 'pointer',
+                                outline: 'none',
+                                transition: 'all 0.2s',
+                                appearance: 'none',
+                                WebkitAppearance: 'none',
+                                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%232563eb' d='M0,0 L10,0 L5,6 Z'/></svg>")`,
+                                backgroundRepeat: 'no-repeat',
+                                backgroundPosition: 'right 8px center'
+                            }}
+                        >
+                            <option value="INR">₹ INR (Rupee)</option>
+                            <option value="USD">$ USD (Dollar)</option>
+                            <option value="EUR">€ EUR (Euro)</option>
+                            <option value="RUB">₽ RUB (Ruble)</option>
+                            <option value="JPY">¥ JPY (Yen)</option>
+                            <option value="GBP">£ GBP (Pound)</option>
+                        </select>
+                    </div>
+                    {/* Period tabs */}
+                    <div style={{ display:'flex', gap:'4px', background:'rgba(0,0,0,0.04)', borderRadius:'8px', padding:'4px' }}>
+                        {['1D','1W','3M','6M','1Y','5Y'].map(p => (
+                            <div key={p} onClick={() => handlePeriodChange(p)} style={{ padding:'4px 10px', borderRadius:'6px', fontSize:'12px', fontWeight: p===period ? 700 : 500, color: p===period ? '#fff' : 'var(--text-muted)', background: p===period ? chartColor : 'transparent', cursor:'pointer', transition:'all 0.15s' }}>
+                                {p}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ height:'260px', width:'100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={converted} margin={{ top:4, right:0, left:0, bottom:0 }}>
+                        <defs>
+                            <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%"   stopColor={chartColor} stopOpacity={0.25} />
+                                <stop offset="80%"  stopColor={chartColor} stopOpacity={0.03} />
+                                <stop offset="100%" stopColor={chartColor} stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false} />
+                        <XAxis dataKey="date" stroke="transparent" tick={{ fill:'#6b7280', fontSize:11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+                        <YAxis stroke="transparent" tick={{ fill:'#6b7280', fontSize:11 }} tickLine={false} axisLine={false} tickFormatter={v => `${sym}${v.toLocaleString()}`} width={64} domain={['auto','auto']} />
+                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: chartColor, strokeWidth: 1, strokeDasharray: '4 3' }} />
+                        <Area type="monotone" dataKey="price" stroke={chartColor} strokeWidth={2} fill="url(#priceGrad)" dot={false} activeDot={{ r:5, fill:chartColor, stroke:'#fff', strokeWidth:2 }} />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
+
+            <div style={{ display:'flex', gap:'32px', marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(0,0,0,0.06)' }}>
+                {[
+                    { label:'Open',    value: fmt(data[0]?.price) },
+                    { label:'Close',   value: fmt(data[data.length-1]?.price) },
+                    { label:'High',    value: fmt(Math.max(...data.map(d=>d.price))) },
+                    { label:'Low',     value: fmt(Math.min(...data.map(d=>d.price))) },
+                    { label:'Change',  value:`${isUp?'+':''}${changePct}%`, color:chartColor },
+                    { label:'Currency', value: displayCurrency, color:'var(--primary)' },
+                ].map(({ label, value, color }) => (
+                    <div key={label}>
+                        <div style={{ fontSize:'11px', color:'#6b7280', marginBottom:'2px' }}>{label}</div>
+                        <div style={{ fontSize:'13px', fontWeight:600, color: color||'var(--text)' }}>{value}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -23,6 +232,11 @@ const Dashboard = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    // Live Data State
+    const [liveQuote, setLiveQuote] = useState(null);
+    const [liveNews, setLiveNews] = useState(null);
+    const [chartTab, setChartTab] = useState('pe'); // 'pe' or 'ev'
+
     // Analyzer State
     const [company, setCompany] = useState('');
     const [dealType, setDealType] = useState('M&A');
@@ -31,6 +245,20 @@ const Dashboard = () => {
 
     // History State
     const [searchHistory, setSearchHistory] = useState([]);
+
+    // Currency State
+    const [currencyInfo, setCurrencyInfo] = useState({ symbol: '$', code: 'USD' });
+    const [rates, setRates] = useState({ USD: 1 });
+
+    // Detect user's country and load exchange rates once on mount
+    useEffect(() => {
+        (async () => {
+            const currency = await detectCurrency();
+            const allRates = await getAllExchangeRates();
+            setCurrencyInfo(currency);
+            setRates(allRates);
+        })();
+    }, []);
 
     useEffect(() => {
         const savedUser = localStorage.getItem('db_user');
@@ -67,7 +295,10 @@ const Dashboard = () => {
                 };
 
                 // Save user to MongoDB backend
-                await api.googleLogin(userData.username, userData.name);
+                const res = await api.googleLogin(userData.username, userData.name);
+                if (res.data.token) {
+                    localStorage.setItem('db_token', res.data.token);
+                }
 
                 localStorage.setItem('db_user', JSON.stringify(userData));
                 setUser(userData);
@@ -87,12 +318,12 @@ const Dashboard = () => {
         try {
             const res = await api.login(email, password);
             if (res.data.status === 'success') {
-                const userData = { username: email };
-                localStorage.setItem('userSession', JSON.stringify(userData));
-                setUser(userData);
+                localStorage.setItem('db_token', res.data.token);
+                localStorage.setItem('db_user', JSON.stringify(res.data.user));
+                setUser(res.data.user);
                 setError('');
             } else {
-                setError('Invalid credentials');
+                setError(res.data.message || 'Invalid credentials');
             }
         } catch (e) {
             setError('Error connecting to server');
@@ -118,6 +349,7 @@ const Dashboard = () => {
 
     const handleSignOut = () => {
         localStorage.removeItem('db_user');
+        localStorage.removeItem('db_token');
         localStorage.removeItem('latest_analysis');
         setUser(null);
         navigate('/');
@@ -132,15 +364,32 @@ const Dashboard = () => {
         if (!company) return;
         setLoading(true);
         setLatestData(null);
+        setLiveQuote(null);
+        setLiveNews(null);
         try {
             const res = await api.analyze(company, dealType);
             setLatestData(res.data);
+            if (res.data.live_market_data) setLiveQuote(res.data.live_market_data);
+            if (res.data.news_data) setLiveNews(res.data.news_data);
             setLoading(false);
         } catch (e) {
             alert("Analysis failed. Backend might be down.");
             setLoading(false);
         }
     };
+
+    // Live quote fetch on input blur or after delay
+    useEffect(() => {
+        if (company.length >= 1) {
+            const timer = setTimeout(async () => {
+                try {
+                    const res = await api.getLiveQuote(company);
+                    if (res.data && !res.data.error) setLiveQuote(res.data);
+                } catch (e) {}
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [company]);
 
     const loadHistory = async () => {
         try {
@@ -269,12 +518,21 @@ const Dashboard = () => {
                                 <div className="input-row">
                                     <div className="input-group">
                                         <label>Company Ticker / Name</label>
-                                        <input
-                                            type="text"
-                                            value={company}
-                                            onChange={(e) => setCompany(e.target.value)}
-                                            placeholder="e.g. Goldman Sachs or GS"
-                                        />
+                                        <div style={{ position: 'relative' }}>
+                                            <input
+                                                type="text"
+                                                value={company}
+                                                onChange={(e) => setCompany(e.target.value)}
+                                                placeholder="e.g. Goldman Sachs or GS"
+                                                style={{ paddingRight: liveQuote ? '120px' : '15px' }}
+                                            />
+                                            {liveQuote && (
+                                                <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '700', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                    ${liveQuote.price}
+                                                    <span style={{ fontSize: '10px', opacity: 0.8, borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>{liveQuote.source === 'yfinance' ? 'YF' : 'AV'}</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="input-group">
                                         <label>Deal Type</label>
@@ -316,6 +574,31 @@ const Dashboard = () => {
                                             <h4><Globe size={18} /> Industry Landscape</h4>
                                             <p>{latestData.analysis.industry}</p>
                                         </div>
+
+                                        {liveNews && liveNews.headlines && liveNews.headlines.length > 0 && (
+                                            <div className="card glass full-width" style={{ borderLeft: '4px solid #3b82f6' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                                    <h4><Zap size={18} /> Market Intelligence: Recent News</h4>
+                                                    <span className={`tag ${liveNews.sentiment.toLowerCase()}`} style={{ 
+                                                        background: liveNews.sentiment === 'Bullish' ? '#dcfce7' : (liveNews.sentiment === 'Bearish' ? '#fee2e2' : '#f1f5f9'),
+                                                        color: liveNews.sentiment === 'Bullish' ? '#166534' : (liveNews.sentiment === 'Bearish' ? '#991b1b' : '#475569'),
+                                                        padding: '4px 12px', borderRadius: '100px', fontSize: '11px', fontWeight: '800'
+                                                    }}>
+                                                        {liveNews.sentiment.toUpperCase()} SENTIMENT
+                                                    </span>
+                                                </div>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                    {liveNews.headlines.map((h, i) => (
+                                                        <a key={i} href={h.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                            <div className="news-item" style={{ padding: '12px', background: 'rgba(0,0,0,0.02)', borderRadius: '6px', border: '1px solid var(--border)', transition: 'all 0.2s' }}>
+                                                                <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{h.title}</div>
+                                                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700' }}>{h.source.toUpperCase()}</div>
+                                                            </div>
+                                                        </a>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                         <div className="card glass full-width" style={{ borderLeft: '4px solid var(--primary)' }}>
                                             <h4><TrendingUp size={18} /> Financial Snapshot</h4>
                                             <p style={{ fontSize: '18px', color: 'var(--primary)', fontWeight: '500' }}>{latestData.analysis.figures}</p>
@@ -330,29 +613,26 @@ const Dashboard = () => {
                                         </div>
 
                                         {latestData.history_data && latestData.history_data.length > 0 && (
-                                            <div className="card glass full-width">
-                                                <h4><BarChart4 size={18} /> Visual Intelligence: LTM Price Performance</h4>
-                                                <div style={{ height: '300px', width: '100%', marginTop: '20px' }}>
-                                                    <ResponsiveContainer width="100%" height="100%">
-                                                        <LineChart data={latestData.history_data}>
-                                                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                                                            <XAxis dataKey="date" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-                                                            <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
-                                                            <Tooltip
-                                                                contentStyle={{ background: '#fff', border: '1px solid var(--border-strong)', borderRadius: '8px' }}
-                                                                itemStyle={{ color: 'var(--primary)' }}
-                                                            />
-                                                            <Line type="monotone" dataKey="price" stroke="var(--primary)" strokeWidth={3} dot={{ fill: 'var(--primary)', r: 4 }} activeDot={{ r: 6 }} />
-                                                        </LineChart>
-                                                    </ResponsiveContainer>
-                                                </div>
-                                            </div>
+                                            <PriceChartCard
+                                                key={latestData.company}
+                                                company={latestData.company}
+                                                initialData={latestData.history_data}
+                                                currencyInfo={currencyInfo}
+                                                rates={rates}
+                                                initialStockCurrency={latestData.currency}
+                                            />
                                         )}
 
                                         {latestData.benchmarking_data && latestData.benchmarking_data.length > 0 && (
                                             <div className="card glass full-width">
-                                                <h4><TrendingUp size={18} /> Multiples Benchmarking (P/E Ratio)</h4>
-                                                <div style={{ height: '300px', width: '100%', marginTop: '20px' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                                    <h4><TrendingUp size={18} /> Multiples Benchmarking</h4>
+                                                    <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '6px', display: 'flex', gap: '4px' }}>
+                                                        <button className={`btn-tab ${chartTab === 'pe' ? 'active' : ''}`} onClick={() => setChartTab('pe')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'pe' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>P/E</button>
+                                                        <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'ev' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>EV/EBITDA</button>
+                                                    </div>
+                                                </div>
+                                                <div style={{ height: '300px', width: '100%' }}>
                                                     <ResponsiveContainer width="100%" height="100%">
                                                         <BarChart data={latestData.benchmarking_data}>
                                                             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -363,7 +643,7 @@ const Dashboard = () => {
                                                                 itemStyle={{ color: 'var(--primary)' }}
                                                                 cursor={{ fill: 'rgba(0,0,0,0.02)' }}
                                                             />
-                                                            <Bar dataKey="pe_ratio" radius={[4, 4, 0, 0]}>
+                                                            <Bar dataKey={chartTab === 'pe' ? 'pe_ratio' : 'ev_ebitda'} radius={[4, 4, 0, 0]}>
                                                                 {latestData.benchmarking_data.map((entry, index) => (
                                                                     <Cell key={`cell-${index}`} fill={index === 0 ? 'var(--primary)' : 'var(--border-strong)'} />
                                                                 ))}
@@ -445,11 +725,16 @@ const Dashboard = () => {
                                             </thead>
                                             <tbody>
                                                 {searchHistory.map((item, i) => (
-                                                    <tr key={i}>
+                                                    <tr key={i} onClick={() => {
+                                                        setLatestData(item);
+                                                        setLiveQuote(item.live_market_data);
+                                                        setLiveNews(item.news_data);
+                                                        setView('analyzer');
+                                                    }} style={{ cursor: 'pointer' }}>
                                                         <td><strong>{item.company}</strong></td>
                                                         <td>{item.deal_type}</td>
-                                                        <td>{item.analysis.industry || "N/A"}</td>
-                                                        <td>Recent</td>
+                                                        <td title={item.analysis.industry}>{item.analysis.industry ? (item.analysis.industry.substring(0, 50) + "...") : "N/A"}</td>
+                                                        <td>{item.timestamp ? new Date(item.timestamp).toLocaleDateString() : "Recent"}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>

@@ -8,3 +8,6 @@ openai
 gunicorn
 python-dotenv
 pymongo
+bcrypt
+PyJWT
+flask-limiter
