@@ -459,50 +459,30 @@ const LandingPage = () => {
                 </div>
             </header>
 
-            <section className="hero-section">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '80px', maxWidth: '1400px', margin: '0 auto' }}>
-                    <div style={{ flex: 1.2 }}>
-                        <div className="tag" style={{ background: 'var(--surface-dim)', color: 'var(--text-muted)', fontWeight: '500', borderRadius: '100px', padding: '6px 16px', letterSpacing: '0.5px' }}>
-                            <span style={{ color: 'var(--primary)', fontWeight: '700', marginRight: '8px' }}>●</span> DB RESEARCH PLATFORM V3.4.2
-                        </div>
-                        <h1 className="hero-title" style={{ fontSize: '72px', lineHeight: '1.1', marginBottom: '32px' }}>
-                            Institutional-grade investment banking intelligence.
-                        </h1>
-                        <p className="hero-subtitle" style={{ fontSize: '20px', color: 'var(--text-muted)', marginBottom: '48px', maxWidth: '600px' }}>
-                            Accelerate deal flow with autonomous research workflows. Synthesize vast datasets, 
-                            uncover peer group anomalies, and execute with mathematical precision.
-                        </p>
-                        <div className="hero-buttons" style={{ display: 'flex', gap: '20px' }}>
-                            <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px' }}>
-                                Analyze a Deal <ArrowRight size={18} />
-                            </button>
-                            <button className="btn btn-secondary" onClick={() => navigate('/services')} style={{ padding: '16px 32px' }}>
-                                Explore Platform
-                            </button>
-                        </div>
-                        <div className="hero-stats" style={{ marginTop: '64px', display: 'flex', gap: '60px' }}>
-                            <div className="stat"><h3>4+</h3><p>DEAL TYPES</p></div>
-                            <div className="stat"><h3>Live</h3><p>PEER MULTIPLES</p></div>
-                            <div className="stat"><h3>Top 20</h3><p>BANK COVERAGE</p></div>
-                        </div>
+            <section className="hero-section" style={{ textAlign: 'center', padding: '100px 20px 80px 20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '960px', margin: '0 auto' }}>
+                    <div className="tag hero-animate anim-delay-100" style={{ background: 'var(--surface-dim)', color: 'var(--text-muted)', fontWeight: '500', borderRadius: '100px', padding: '6px 16px', letterSpacing: '0.5px', display: 'inline-flex', alignItems: 'center', marginBottom: '32px' }}>
+                        <span style={{ color: 'var(--primary)', fontWeight: '700', marginRight: '8px' }}>●</span> DB RESEARCH PLATFORM V3.4.2
                     </div>
-
-                    <div style={{ flex: 1, position: 'relative' }}>
-                        <div className="glass" style={{ padding: '24px', background: '#fff', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', borderRadius: '12px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
-                                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--primary)', letterSpacing: '1px' }}>DEAL FLOW SYNTHESIS</span>
-                                <span style={{ fontSize: '11px', fontWeight: '700', color: '#10b981' }}>LIVE</span>
-                            </div>
-                            <div style={{ borderRadius: '8px', overflow: 'hidden', background: 'var(--surface-dim)', aspectRatio: '4/3' }}>
-                                <img 
-                                    src="/hero-dashboard.png" 
-                                    alt="Platform Preview" 
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
-                            </div>
-                        </div>
-                        {/* Decorative background element */}
-                        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100%', height: '100%', background: 'var(--surface-dim)', zIndex: -1, borderRadius: '12px' }}></div>
+                    <h1 className="hero-title hero-animate anim-delay-200" style={{ fontSize: '72px', lineHeight: '1.1', marginBottom: '32px', textAlign: 'center', maxWidth: '850px' }}>
+                        Institutional-grade investment banking intelligence.
+                    </h1>
+                    <p className="hero-subtitle hero-animate anim-delay-300" style={{ fontSize: '20px', color: 'var(--text-muted)', marginBottom: '48px', maxWidth: '750px', margin: '0 auto 48px', textAlign: 'center', lineHeight: '1.6' }}>
+                        Accelerate deal flow with autonomous research workflows. Synthesize vast datasets, 
+                        uncover peer group anomalies, and execute with mathematical precision.
+                    </p>
+                    <div className="hero-buttons hero-animate anim-delay-400" style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '16px' }}>
+                        <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px' }}>
+                            Analyze a Deal <ArrowRight size={18} />
+                        </button>
+                        <button className="btn btn-secondary" onClick={() => navigate('/services')} style={{ padding: '16px 32px' }}>
+                            Explore Platform
+                        </button>
+                    </div>
+                    <div className="hero-stats hero-animate anim-delay-500" style={{ marginTop: '64px', display: 'flex', gap: '80px', justifyContent: 'center', width: '100%' }}>
+                        <div className="stat" style={{ textAlign: 'center' }}><h3 style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>4+</h3><p style={{ margin: 0, fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '1px' }}>DEAL TYPES</p></div>
+                        <div className="stat" style={{ textAlign: 'center' }}><h3 style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Live</h3><p style={{ margin: 0, fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '1px' }}>PEER MULTIPLES</p></div>
+                        <div className="stat" style={{ textAlign: 'center' }}><h3 style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Top 20</h3><p style={{ margin: 0, fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '1px' }}>BANK COVERAGE</p></div>
                     </div>
                 </div>
             </section>

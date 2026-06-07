@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    BarChart4, LayoutDashboard, History, CreditCard,
+    BarChart4, LayoutDashboard, CreditCard,
     FileText, Zap, TrendingUp, Download, RefreshCw,
-    Globe, Shield
+    Globe, Shield, Building2
 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
-import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol, CURRENCY_MAP } from '../services/api';
+import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol } from '../services/api';
 import {
     AreaChart, Area,
     LineChart, Line,
@@ -221,10 +221,342 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
     );
 };
 
+const DEAL_CONFIGS = {
+    ma: {
+        label: 'M&A',
+        dealType: 'M&A',
+        color: '#6366f1',
+        description: 'Mergers & Acquisitions — strategic fit, synergies, valuation premium analysis',
+        showSections: ['overview', 'industry', 'rationale', 'risks', 'comps', 'benchmarking', 'banks', 'chart', 'news'],
+    },
+    ipo: {
+        label: 'IPO',
+        dealType: 'IPO',
+        color: '#10b981',
+        description: 'Initial Public Offering — equity story, listing prospects, price band analysis',
+        showSections: ['overview', 'industry', 'rationale', 'risks', 'banks', 'chart', 'news'],
+    },
+    lbo: {
+        label: 'LBO',
+        dealType: 'LBO',
+        color: '#f59e0b',
+        description: 'Leveraged Buyout — debt capacity, cash flow stability, exit strategy',
+        showSections: ['overview', 'rationale', 'risks', 'benchmarking', 'banks', 'chart'],
+    },
+    restr: {
+        label: 'Restructuring',
+        dealType: 'Restructuring',
+        color: '#ef4444',
+        description: 'Restructuring — debt re-profiling, asset sales, liquidity management',
+        showSections: ['overview', 'industry', 'risks', 'banks', 'chart', 'news'],
+    },
+    ecm: {
+        label: 'ECM',
+        dealType: 'ECM',
+        color: '#8b5cf6',
+        description: 'Equity Capital Markets — follow-on offerings, rights issues, block trades',
+        showSections: ['overview', 'rationale', 'benchmarking', 'banks', 'chart', 'news'],
+    },
+    dcm: {
+        label: 'DCM',
+        dealType: 'DCM',
+        color: '#0ea5e9',
+        description: 'Debt Capital Markets — bond issuance, credit analysis, yield positioning',
+        showSections: ['overview', 'industry', 'risks', 'banks', 'news'],
+    },
+    pf: {
+        label: 'Project Finance',
+        dealType: 'Project Finance',
+        color: '#f43f5e',
+        description: 'Project Finance — infrastructure financing, SPV analysis, cash flow coverage',
+        showSections: ['overview', 'industry', 'rationale', 'risks', 'banks', 'chart', 'news'],
+    },
+    valuation: {
+        label: 'Valuation',
+        dealType: 'M&A',
+        color: '#14b8a6',
+        description: 'Standalone valuation — trading comps, transaction comps, DCF triangulation',
+        showSections: ['overview', 'comps', 'benchmarking', 'chart', 'news'],
+    }
+};
+
+const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
+    const config = DEAL_CONFIGS[dealKey];
+    const [company, setCompany]   = useState('');
+    const [loading, setLoading]   = useState(false);
+    const [result, setResult]     = useState(null);
+    const [liveQuote, setLiveQuote] = useState(null);
+    const [liveNews, setLiveNews] = useState(null);
+    const [chartTab, setChartTab] = useState('pe');
+
+    const handleAnalyze = async () => {
+        if (!company.trim()) return;
+        setLoading(true);
+        setResult(null);
+        setLiveQuote(null);
+        setLiveNews(null);
+        try {
+            const res = await api.analyze(company.trim(), config.dealType);
+            setResult(res.data);
+            if (res.data.live_market_data) setLiveQuote(res.data.live_market_data);
+            if (res.data.news_data) setLiveNews(res.data.news_data);
+        } catch {
+            alert('Analysis failed. Backend might be down.');
+        } finally { setLoading(false); }
+    };
+
+    useEffect(() => {
+        if (company.length >= 1) {
+            const timer = setTimeout(async () => {
+                try {
+                    const res = await api.getLiveQuote(company);
+                    if (res.data && !res.data.error) setLiveQuote(res.data);
+                } catch (e) {}
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [company]);
+
+    const show = (section) => config.showSections.includes(section);
+
+    return (
+        <div className="dashboard-body">
+            <div style={{ 
+                marginBottom: '24px', 
+                padding: '24px 28px', 
+                background: `linear-gradient(135deg, ${config.color}15, ${config.color}05)`, 
+                border: `1px solid ${config.color}25`, 
+                borderRadius: '16px', 
+                borderLeft: `6px solid ${config.color}`,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+                backdropFilter: 'blur(10px)'
+            }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: config.color, letterSpacing: '0.15em', marginBottom: '6px', textTransform: 'uppercase' }}>
+                    SECURE DEAL ROOM
+                </div>
+                <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: 'var(--text)' }}>
+                    {config.label} Intelligence Center
+                </h2>
+                <p style={{ margin: '6px 0 0', color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.5' }}>
+                    {config.description}
+                </p>
+            </div>
+
+            <div className="input-panel glass">
+                <h3>Analyze a {config.label} Opportunity</h3>
+                <div className="input-row">
+                    <div className="input-group">
+                        <label>Company Ticker / Name</label>
+                        <div style={{ position: 'relative' }}>
+                            <input
+                                type="text"
+                                value={company}
+                                onChange={e => setCompany(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && handleAnalyze()}
+                                placeholder={`e.g. RELIANCE.NS or Apple`}
+                                style={{ paddingRight: (liveQuote && !isNaN(parseFloat(liveQuote.price))) ? '130px' : '15px' }}
+                            />
+                            {liveQuote && (() => {
+                                const priceVal = parseFloat(liveQuote.price);
+                                if (isNaN(priceVal)) return null;
+                                const getStockCurrency = (symbol) => {
+                                    const u = (symbol || '').toUpperCase();
+                                    if (u.includes('.NS') || u.includes('.BO') || u.includes('RELIANCE') || u.includes('TCS') || u.includes('INFY') || u.includes('WIPRO')) return 'INR';
+                                    if (u.includes('.L')) return 'GBP';
+                                    return 'USD';
+                                };
+                                const displayCurrency = currencyInfo?.code || 'USD';
+                                const stockCurrency = getStockCurrency(company);
+                                const fromRate = rates?.[stockCurrency] || 1;
+                                const toRate = rates?.[displayCurrency] || 1;
+                                const displayRate = toRate / fromRate;
+                                const sym = getCurrencySymbol(displayCurrency);
+                                const convertedPrice = (priceVal * displayRate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                return (
+                                    <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: config.color, color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '700', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        {sym}{convertedPrice}
+                                        <span style={{ fontSize: '10px', opacity: 0.8, borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>{liveQuote.source === 'yfinance' ? 'YF' : 'AV'}</span>
+                                    </div>
+                                );
+                            })()}
+                        </div>
+                    </div>
+                    
+                    <div className="input-group">
+                        <label>Currency</label>
+                        <select
+                            value={currencyInfo?.code || 'USD'}
+                            onChange={(e) => setCurrencyInfo({ code: e.target.value, symbol: getCurrencySymbol(e.target.value) })}
+                            style={{
+                                fontWeight: '700',
+                                border: '1px solid var(--border)',
+                                background: '#eff6ff',
+                                color: '#2563eb',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <option value="INR">₹ INR (Rupee)</option>
+                            <option value="USD">$ USD (Dollar)</option>
+                            <option value="EUR">€ EUR (Euro)</option>
+                            <option value="RUB">₽ RUB (Ruble)</option>
+                            <option value="JPY">¥ JPY (Yen)</option>
+                            <option value="GBP">£ GBP (Pound)</option>
+                        </select>
+                    </div>
+
+                    <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading}
+                        style={{ background: config.color, borderColor: config.color }}>
+                        <Zap size={18} /> Analyze {config.label}
+                    </button>
+                </div>
+            </div>
+
+            {loading && (
+                <div id="loading">
+                    <div className="spinner" style={{ borderColor: `${config.color}33`, borderTopColor: config.color }} />
+                    <p>Generating real-time {config.label} intelligence for {company}…</p>
+                </div>
+            )}
+
+            {result && (
+                <div className="results-grid" style={{ marginTop: '24px' }}>
+                    {show('overview') && (
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
+                            <h4><FileText size={18} style={{ color: config.color }} /> Deal Overview</h4>
+                            <p>{result.analysis?.overview}</p>
+                        </div>
+                    )}
+                    {show('industry') && (
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
+                            <h4><Globe size={18} style={{ color: config.color }} /> Industry Landscape</h4>
+                            <p>{result.analysis?.industry}</p>
+                        </div>
+                    )}
+                    {show('news') && liveNews?.headlines?.length > 0 && (
+                        <div className="card glass full-width" style={{ borderLeft: `4px solid ${config.color}` }}>
+                            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px' }}>
+                                <h4><Zap size={18} style={{ color: config.color }} /> Market News</h4>
+                                <span style={{ 
+                                    background: liveNews.sentiment === 'Bullish' ? '#dcfce7' : (liveNews.sentiment === 'Bearish' ? '#fee2e2' : '#f1f5f9'),
+                                    color: liveNews.sentiment === 'Bullish' ? '#166534' : (liveNews.sentiment === 'Bearish' ? '#991b1b' : '#475569'),
+                                    padding:'4px 12px', 
+                                    borderRadius:'100px', 
+                                    fontSize:'11px', 
+                                    fontWeight:'800' 
+                                }}>
+                                    {liveNews.sentiment?.toUpperCase()} SENTIMENT
+                                </span>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {liveNews.headlines.map((h, i) => (
+                                    <a key={i} href={h.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration:'none', color:'inherit' }}>
+                                        <div className="news-item" style={{ padding:'12px', background:'rgba(0,0,0,0.02)', borderRadius:'6px', border:'1px solid var(--border)', transition: 'all 0.2s' }}>
+                                            <div style={{ fontSize:'14px', fontWeight:'600' }}>{h.title}</div>
+                                            <div style={{ fontSize:'11px', color:'var(--text-muted)', marginTop:'4px', fontWeight: '700' }}>{h.source?.toUpperCase()}</div>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {show('rationale') && (
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
+                            <h4><TrendingUp size={18} style={{ color: config.color }} /> Investment Rationale</h4>
+                            {Array.isArray(result.analysis?.rationale)
+                                ? <ul style={{ paddingLeft:'16px', margin:0 }}>{result.analysis.rationale.map((r,i)=><li key={i} style={{ marginBottom:'4px' }}>{r}</li>)}</ul>
+                                : <p>{result.analysis?.rationale}</p>
+                            }
+                        </div>
+                    )}
+                    {show('risks') && (
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
+                            <h4><Shield size={18} style={{ color: config.color }} /> Key Risks</h4>
+                            {Array.isArray(result.analysis?.risks)
+                                ? <ul style={{ paddingLeft:'16px', margin:0 }}>{result.analysis.risks.map((r,i)=><li key={i} style={{ marginBottom:'4px' }}>{r}</li>)}</ul>
+                                : <p>{result.analysis?.risks}</p>
+                            }
+                        </div>
+                    )}
+                    {show('chart') && result.history_data?.length > 0 && (
+                        <PriceChartCard 
+                            company={result.company} 
+                            initialData={result.history_data} 
+                            currencyInfo={currencyInfo} 
+                            rates={rates} 
+                            initialStockCurrency={result.currency}
+                        />
+                    )}
+                    {show('comps') && result.comps?.length > 0 && (
+                        <div className="card glass full-width" style={{ borderTop: `3px solid ${config.color}` }}>
+                            <h4><Zap size={18} style={{ color: config.color }} /> Comparable Peer Group</h4>
+                            <div className="table-container">
+                                <table>
+                                    <thead><tr>{result.comps[0]?.map((h,i)=><th key={i}>{h}</th>)}</tr></thead>
+                                    <tbody>{result.comps.slice(1).map((row,i)=><tr key={i}>{row.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                    {show('benchmarking') && result.benchmarking_data?.length > 0 && (
+                        <div className="card glass full-width">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h4><TrendingUp size={18} style={{ color: config.color }} /> Multiples Benchmarking</h4>
+                                <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '6px', display: 'flex', gap: '4px' }}>
+                                    <button className={`btn-tab ${chartTab === 'pe' ? 'active' : ''}`} onClick={() => setChartTab('pe')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'pe' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>P/E</button>
+                                    <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'ev' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>EV/EBITDA</button>
+                                </div>
+                            </div>
+                            <div style={{ height:'300px' }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={result.benchmarking_data}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                                        <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={10} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                                        <Tooltip 
+                                            contentStyle={{ background:'#fff', border: '1px solid var(--border-strong)', borderRadius:'8px' }} 
+                                            itemStyle={{ color: config.color }}
+                                            cursor={{ fill: 'rgba(0,0,0,0.02)' }}
+                                        />
+                                        <Bar dataKey={chartTab === 'pe' ? 'pe_ratio' : 'ev_ebitda'} radius={[4,4,0,0]}>
+                                            {result.benchmarking_data.map((_,i)=><Cell key={i} fill={i===0 ? config.color : 'var(--border-strong)'} />)}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '12px', textAlign: 'center' }}>
+                                Selected color bar indicates Target Company ({result.company})
+                            </p>
+                        </div>
+                    )}
+                    {show('banks') && result.banks?.length > 0 && (
+                        <div className="card glass full-width" style={{ borderTop: `3px solid ${config.color}` }}>
+                            <h4><TrendingUp size={18} style={{ color: config.color }} /> IB Bank Matrix</h4>
+                            <div className="table-container">
+                                <table>
+                                    <thead><tr><th>Bank</th><th>ECM Score</th><th>Probability</th></tr></thead>
+                                    <tbody>
+                                        {result.banks.map((b,i)=>(
+                                            <tr key={i}>
+                                                <td>{b.bank}</td>
+                                                <td>{b.score}</td>
+                                                <td style={{ color: b.probability==='High'?'#10b981':b.probability==='Medium'?'#f59e0b':'#ef4444' }}>{b.probability}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [view, setView] = useState('analyzer');
+    const [view, setView] = useState('ma');
     const [authMode, setAuthMode] = useState('signin');
 
     // Auth State
@@ -243,8 +575,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(false);
     const [latestData, setLatestData] = useState(null);
 
-    // History State
-    const [searchHistory, setSearchHistory] = useState([]);
+
 
     // Currency State
     const [currencyInfo, setCurrencyInfo] = useState({ symbol: '$', code: 'USD' });
@@ -391,18 +722,7 @@ const Dashboard = () => {
         }
     }, [company]);
 
-    const loadHistory = async () => {
-        try {
-            const res = await api.getHistory();
-            setSearchHistory(res.data);
-        } catch (e) {
-            console.error("Failed to load history");
-        }
-    };
 
-    useEffect(() => {
-        if (view === 'history') loadHistory();
-    }, [view]);
 
     const handleDownload = async () => {
         if (!latestData) return;
@@ -497,12 +817,33 @@ const Dashboard = () => {
             <div className="db-layout" style={{ flex: 1, overflow: 'hidden' }}>
                 <aside className="db-sidebar glass">
                     <nav className="sidebar-nav">
-                        <a className={`nav-item ${view === 'analyzer' ? 'active' : ''}`} onClick={() => setView('analyzer')}>
+                        <div className="nav-item" style={{ cursor: 'default', pointerEvents: 'none', background: 'transparent', opacity: 0.7 }}>
                             <LayoutDashboard size={20} /> Deal Analyzer
-                        </a>
-                        <a className={`nav-item ${view === 'history' ? 'active' : ''}`} onClick={() => setView('history')}>
-                            <History size={20} /> History
-                        </a>
+                        </div>
+                        <div style={{ marginTop: '24px', padding: '0 8px' }}>
+                            <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px', paddingLeft: '8px' }}>
+                                DEAL ROOMS
+                            </div>
+                            {[
+                                { key: 'ma',       label: 'M&A',            icon: <Building2 size={16} /> },
+                                { key: 'ipo',      label: 'IPO',             icon: <TrendingUp size={16} /> },
+                                { key: 'lbo',      label: 'LBO',             icon: <BarChart4 size={16} /> },
+                                { key: 'restr',    label: 'Restructuring',   icon: <RefreshCw size={16} /> },
+                                { key: 'ecm',      label: 'ECM',             icon: <Zap size={16} /> },
+                                { key: 'dcm',      label: 'DCM',             icon: <FileText size={16} /> },
+                                { key: 'pf',       label: 'Project Finance', icon: <Globe size={16} /> },
+                                { key: 'valuation',label: 'Valuation',       icon: <TrendingUp size={16} /> },
+                            ].map(({ key, label, icon }) => (
+                                <a
+                                    key={key}
+                                    className={`nav-item ${view === key ? 'active' : ''}`}
+                                    onClick={() => setView(key)}
+                                    style={{ paddingLeft: '20px', fontSize: '13px' }}
+                                >
+                                    {icon} {label}
+                                </a>
+                            ))}
+                        </div>
                     </nav>
                     <div className="sidebar-footer" style={{ marginTop: 'auto' }}>
                         <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Logged in as <strong>{user.username}</strong></p>
@@ -511,7 +852,7 @@ const Dashboard = () => {
                 </aside>
 
                 <main className="db-main">
-                    {view === 'analyzer' && (
+                    {false && (
                         <div className="dashboard-body">
                             <div className="input-panel glass">
                                 <h3>Analyze a Deal</h3>
@@ -524,14 +865,31 @@ const Dashboard = () => {
                                                 value={company}
                                                 onChange={(e) => setCompany(e.target.value)}
                                                 placeholder="e.g. Goldman Sachs or GS"
-                                                style={{ paddingRight: liveQuote ? '120px' : '15px' }}
+                                                style={{ paddingRight: (liveQuote && !isNaN(parseFloat(liveQuote.price))) ? '130px' : '15px' }}
                                             />
-                                            {liveQuote && (
-                                                <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '700', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                                    ${liveQuote.price}
-                                                    <span style={{ fontSize: '10px', opacity: 0.8, borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>{liveQuote.source === 'yfinance' ? 'YF' : 'AV'}</span>
-                                                </div>
-                                            )}
+                                            {liveQuote && (() => {
+                                                const priceVal = parseFloat(liveQuote.price);
+                                                if (isNaN(priceVal)) return null;
+                                                const getStockCurrency = (symbol) => {
+                                                    const u = (symbol || '').toUpperCase();
+                                                    if (u.includes('.NS') || u.includes('.BO') || u.includes('RELIANCE') || u.includes('TCS') || u.includes('INFY') || u.includes('WIPRO')) return 'INR';
+                                                    if (u.includes('.L')) return 'GBP';
+                                                    return 'USD';
+                                                };
+                                                const displayCurrency = currencyInfo?.code || 'USD';
+                                                const stockCurrency = getStockCurrency(company);
+                                                const fromRate = rates?.[stockCurrency] || 1;
+                                                const toRate = rates?.[displayCurrency] || 1;
+                                                const displayRate = toRate / fromRate;
+                                                const sym = getCurrencySymbol(displayCurrency);
+                                                const convertedPrice = (priceVal * displayRate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                                return (
+                                                    <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '700', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                        {sym}{convertedPrice}
+                                                        <span style={{ fontSize: '10px', opacity: 0.8, borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>{liveQuote.source === 'yfinance' ? 'YF' : 'AV'}</span>
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                     <div className="input-group">
@@ -541,6 +899,27 @@ const Dashboard = () => {
                                             <option value="IPO">IPO</option>
                                             <option value="LBO">LBO</option>
                                             <option value="Restructuring">Restructuring</option>
+                                        </select>
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Currency</label>
+                                        <select
+                                            value={currencyInfo?.code || 'USD'}
+                                            onChange={(e) => setCurrencyInfo({ code: e.target.value, symbol: getCurrencySymbol(e.target.value) })}
+                                            style={{
+                                                fontWeight: '700',
+                                                border: '1px solid var(--border)',
+                                                background: '#eff6ff',
+                                                color: '#2563eb',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            <option value="INR">₹ INR (Rupee)</option>
+                                            <option value="USD">$ USD (Dollar)</option>
+                                            <option value="EUR">€ EUR (Euro)</option>
+                                            <option value="RUB">₽ RUB (Ruble)</option>
+                                            <option value="JPY">¥ JPY (Yen)</option>
+                                            <option value="GBP">£ GBP (Pound)</option>
                                         </select>
                                     </div>
                                     <button className="btn btn-primary" onClick={handleAnalyze}>
@@ -708,42 +1087,15 @@ const Dashboard = () => {
                         </div>
                     )}
 
-                    {view === 'history' && (
-                        <div className="dashboard-body">
-                            <div className="actions-bar">
-                                <h3>Search History</h3>
-                                <button className="btn btn-secondary" onClick={loadHistory}>
-                                    <RefreshCw size={18} /> Refresh History
-                                </button>
-                            </div>
-                            <div className="card glass full-width">
-                                <div className="table-container">
-                                    {searchHistory.length === 0 ? <p>No past searches found.</p> : (
-                                        <table>
-                                            <thead>
-                                                <tr><th>Company</th><th>Type</th><th>Industry</th><th>Date</th></tr>
-                                            </thead>
-                                            <tbody>
-                                                {searchHistory.map((item, i) => (
-                                                    <tr key={i} onClick={() => {
-                                                        setLatestData(item);
-                                                        setLiveQuote(item.live_market_data);
-                                                        setLiveNews(item.news_data);
-                                                        setView('analyzer');
-                                                    }} style={{ cursor: 'pointer' }}>
-                                                        <td><strong>{item.company}</strong></td>
-                                                        <td>{item.deal_type}</td>
-                                                        <td title={item.analysis.industry}>{item.analysis.industry ? (item.analysis.industry.substring(0, 50) + "...") : "N/A"}</td>
-                                                        <td>{item.timestamp ? new Date(item.timestamp).toLocaleDateString() : "Recent"}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                    {Object.keys(DEAL_CONFIGS).includes(view) && (
+                        <DealRoomView
+                            dealKey={view}
+                            currencyInfo={currencyInfo}
+                            setCurrencyInfo={setCurrencyInfo}
+                            rates={rates}
+                        />
                     )}
+
                 </main>
 
             </div>

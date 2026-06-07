@@ -633,3 +633,42 @@ td {
     width: 100%;
   }
 }
+
+/* --- Staggered Hero Entrance Animations --- */
+@keyframes heroPopup {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.hero-animate {
+  opacity: 0;
+  animation: heroPopup 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.anim-delay-200 {
+  animation-delay: 0.22s;
+}
+
+.anim-delay-300 {
+  animation-delay: 0.34s;
+}
+
+.anim-delay-400 {
+  animation-delay: 0.46s;
+}
+
+.anim-delay-500 {
+  animation-delay: 0.58s;
+}

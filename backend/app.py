@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests, os, json
 from pymongo import MongoClient
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 from pptx import Presentation
 import yfinance as yf
@@ -40,13 +40,43 @@ client = MongoClient(MONGO_URI, tlsCAFile=certifi.where(), tlsAllowInvalidCertif
 db = client["db_advisory"]
 users_col = db["users"]
 history_col = db["history"]
+visitors_col = db["visitors"]
 
 def init_db():
-    # In MongoDB, collections are created on first insert
-    # Add default admin user if not exists
-    if not users_col.find_one({"username": "admin"}):
-        hashed = bcrypt.hashpw("1234".encode('utf-8'), bcrypt.gensalt())
-        users_col.insert_one({"username": "admin", "password": hashed})
+    # Add default admin user if not exists and ensure admin role from .env
+    admin_email = os.getenv("ADMIN_EMAIL", "admin")
+    admin_password = os.getenv("ADMIN_PASSWORD", "1234")
+    
+    # Try to find a user with role "admin"
+    admin_user = users_col.find_one({"role": "admin"})
+    if not admin_user:
+        # Fallback to finding user by username "admin" to migrate
+        admin_user = users_col.find_one({"username": "admin"})
+        
+    if not admin_user:
+        hashed = bcrypt.hashpw(admin_password.encode('utf-8'), bcrypt.gensalt())
+        users_col.insert_one({
+            "username": admin_email,
+            "password": hashed,
+            "role": "admin",
+            "created_at": datetime.utcnow()
+        })
+    else:
+        updates = {}
+        if admin_user.get("username") != admin_email:
+            updates["username"] = admin_email
+        if admin_user.get("role") != "admin":
+            updates["role"] = "admin"
+            
+        try:
+            if not bcrypt.checkpw(admin_password.encode('utf-8'), admin_user['password']):
+                updates["password"] = bcrypt.hashpw(admin_password.encode('utf-8'), bcrypt.gensalt())
+        except Exception:
+            updates["password"] = bcrypt.hashpw(admin_password.encode('utf-8'), bcrypt.gensalt())
+            
+        if updates:
+            users_col.update_one({"_id": admin_user["_id"]}, {"$set": updates})
+            
     print("MongoDB connection established and initialized.")
 
 init_db()
@@ -174,8 +204,59 @@ def get_alpha_vantage(ticker):
 def get_news_sentiment(company):
     if not NEWS_API_KEY: return {"headlines": [], "sentiment": "Neutral"}
     try:
-        url = f"https://newsapi.org/v2/everything?q={company}&sortBy=publishedAt&pageSize=5&apiKey={NEWS_API_KEY}"
-        articles = requests.get(url).json().get("articles", [])
+        import re
+        query_term = company
+        
+        # 1. Resolve company name if it's a ticker or has exchange suffixes to ensure high relevancy
+        if company and company != "finance AND market":
+            # Strip exchange suffix (e.g. TCS.NS -> TCS)
+            if "." in query_term:
+                parts = query_term.split(".")
+                if len(parts[-1]) <= 3:
+                    query_term = ".".join(parts[:-1])
+            
+            # Fetch company name from yfinance if query looks like a ticker (short and alphanumeric, or has dots)
+            clean_term = query_term.strip()
+            if ("." in company) or (len(clean_term) <= 12 and clean_term.replace(".", "").replace("-", "").isalnum()):
+                try:
+                    ticker_obj = yf.Ticker(company)
+                    info = ticker_obj.info
+                    resolved_name = info.get("longName") or info.get("shortName")
+                    if resolved_name:
+                        # Clean legal suffixes case-insensitively using regex word boundaries to avoid corruption
+                        # e.g., Inc., Ltd., Corporation, LLC, PLC, etc.
+                        cleaned = resolved_name
+                        for _ in range(3): # pass up to 3 times to clean nested suffixes (e.g., Co., Ltd.)
+                            prev = cleaned
+                            cleaned = re.sub(
+                                r'\b(inc|ltd|corp|corporation|limited|co|company|llc|plc|pty)\b\.?$', 
+                                '', 
+                                cleaned, 
+                                flags=re.IGNORECASE
+                            ).strip()
+                            cleaned = re.sub(r'[\s,]+$', '', cleaned).strip()
+                            if cleaned == prev:
+                                break
+                        query_term = cleaned
+                except Exception as yf_err:
+                    print(f"yfinance helper error in news query: {yf_err}")
+        
+        # 2. Build strict query to filter out irrelevant general news on dashboard
+        search_query = query_term.strip()
+        if search_query and search_query != "finance AND market":
+            search_query = f'"{search_query}" AND (finance OR stock OR earnings OR business OR deal OR acquisition OR merger)'
+        else:
+            search_query = "finance AND market"
+
+        # 3. Query NewsAPI safely using request params to handle encoding
+        url = "https://newsapi.org/v2/everything"
+        params = {
+            "q": search_query,
+            "sortBy": "publishedAt",
+            "pageSize": 5,
+            "apiKey": NEWS_API_KEY
+        }
+        articles = requests.get(url, params=params).json().get("articles", [])
         
         headlines = [{"title": a["title"], "source": a["source"]["name"], "url": a["url"]} for a in articles]
         
@@ -498,6 +579,39 @@ def generate_bank_matrix(company, deal_type, ai_banks=None):
         })
     return results
 
+def get_logged_in_user():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return None
+    try:
+        if auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+        else:
+            token = auth_header
+        data = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        return users_col.find_one({"username": data.get("username")})
+    except Exception as e:
+        print(f"JWT decode error: {e}")
+        return None
+
+@app.route('/track-visit', methods=['POST'])
+def track_visit():
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if ip and ',' in ip:
+        ip = ip.split(',')[0].strip()
+    
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    
+    existing = visitors_col.find_one({"ip": ip, "date": today})
+    if not existing:
+        visitors_col.insert_one({
+            "ip": ip,
+            "date": today,
+            "timestamp": datetime.utcnow()
+        })
+        return jsonify({"status": "success", "new_visit": True})
+    return jsonify({"status": "success", "new_visit": False})
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -509,13 +623,13 @@ def login():
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         token = jwt.encode({
             'username': username,
-            'exp': datetime.utcnow() + datetime.timedelta(hours=24)
+            'exp': datetime.utcnow() + timedelta(hours=24)
         }, JWT_SECRET, algorithm="HS256")
         
         return jsonify({
             "status": "success",
             "token": token,
-            "user": {"username": username, "name": user.get('name', username)}
+            "user": {"username": username, "name": user.get('name', username), "role": user.get('role', 'user')}
         })
     return jsonify({"status": "fail", "message": "Invalid credentials"})
 
@@ -557,13 +671,13 @@ def google_login():
     
     token = jwt.encode({
         'username': username,
-        'exp': datetime.utcnow() + datetime.timedelta(hours=24)
+        'exp': datetime.utcnow() + timedelta(hours=24)
     }, JWT_SECRET, algorithm="HS256")
     
     return jsonify({
         "status": "success", 
         "token": token,
-        "user": {"username": username, "name": name or username}
+        "user": {"username": username, "name": name or username, "role": user.get('role', 'user')}
     })
 
 @app.route('/news', methods=['GET'])
@@ -604,6 +718,9 @@ def fetch_chart_data():
 @app.route('/analyze', methods=['POST'])
 @limiter.limit("5 per minute")
 def analyze():
+    logged_user = get_logged_in_user()
+    username = logged_user["username"] if logged_user else "anonymous"
+
     data = request.json
     company = data.get('company')
     deal_type = data.get('deal_type')
@@ -652,6 +769,7 @@ def analyze():
         "benchmarking_data": benchmarking_data,
         "news_data": news_data,
         "live_market_data": av_data,
+        "username": username,
         "timestamp": datetime.utcnow()
     }
     
@@ -675,6 +793,59 @@ def get_history():
             row["timestamp"] = row["timestamp"].isoformat()
             
     return jsonify(rows)
+
+@app.route('/admin/stats', methods=['GET'])
+def admin_stats():
+    logged_user = get_logged_in_user()
+    if not logged_user or logged_user.get("role") != "admin":
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    try:
+        total_visits = visitors_col.count_documents({})
+        unique_ips_pipeline = [{"$group": {"_id": "$ip"}}, {"$count": "count"}]
+        unique_ips_res = list(visitors_col.aggregate(unique_ips_pipeline))
+        total_unique_visitors = unique_ips_res[0]["count"] if unique_ips_res else 0
+        
+        total_users = users_col.count_documents({})
+        total_deals = history_col.count_documents({})
+        
+        recent_deals_cursor = history_col.find().sort("timestamp", -1).limit(10)
+        recent_deals = []
+        for deal in recent_deals_cursor:
+            recent_deals.append({
+                "company": deal.get("company", "N/A"),
+                "deal_type": deal.get("deal_type", "N/A"),
+                "username": deal.get("username", "anonymous"),
+                "timestamp": deal.get("timestamp").isoformat() if deal.get("timestamp") else None
+            })
+            
+        users_cursor = users_col.find()
+        users_list = []
+        for user in users_cursor:
+            u_name = user.get("username")
+            search_count = history_col.count_documents({"username": u_name})
+            users_list.append({
+                "username": u_name,
+                "name": user.get("name", u_name),
+                "role": user.get("role", "user"),
+                "created_at": user.get("created_at").isoformat() if user.get("created_at") else None,
+                "searches_count": search_count
+            })
+            
+        return jsonify({
+            "status": "success",
+            "metrics": {
+                "total_unique_visitors": total_unique_visitors,
+                "total_visits": total_visits,
+                "total_users": total_users,
+                "total_deals": total_deals
+            },
+            "recent_deals": recent_deals,
+            "users": users_list
+        })
+    except Exception as e:
+        print(f"Error fetching admin stats: {e}")
+        return jsonify({"error": "Failed to load admin stats", "details": str(e)}), 500
 
 @app.route('/download_ppt', methods=['POST'])
 def download_ppt():

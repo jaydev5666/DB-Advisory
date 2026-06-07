@@ -116,4 +116,8 @@ export const api = {
         client.get(`/market/movers`),
     marketIndex: (index = '^NSEI', exchange = 'NSE') =>
         client.get(`/market/index?index=${index}&exchange=${exchange}`),
+    trackVisit: () =>
+        client.post(`/track-visit`),
+    getAdminStats: () =>
+        client.get(`/admin/stats`),
 };
