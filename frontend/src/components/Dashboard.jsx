@@ -382,27 +382,7 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                         </div>
                     </div>
                     
-                    <div className="input-group">
-                        <label>Currency</label>
-                        <select
-                            value={currencyInfo?.code || 'USD'}
-                            onChange={(e) => setCurrencyInfo({ code: e.target.value, symbol: getCurrencySymbol(e.target.value) })}
-                            style={{
-                                fontWeight: '700',
-                                border: '1px solid var(--border)',
-                                background: '#eff6ff',
-                                color: '#2563eb',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            <option value="INR">₹ INR (Rupee)</option>
-                            <option value="USD">$ USD (Dollar)</option>
-                            <option value="EUR">€ EUR (Euro)</option>
-                            <option value="RUB">₽ RUB (Ruble)</option>
-                            <option value="JPY">¥ JPY (Yen)</option>
-                            <option value="GBP">£ GBP (Pound)</option>
-                        </select>
-                    </div>
+
 
                     <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading}
                         style={{ background: config.color, borderColor: config.color }}>
@@ -901,27 +881,7 @@ const Dashboard = () => {
                                             <option value="Restructuring">Restructuring</option>
                                         </select>
                                     </div>
-                                    <div className="input-group">
-                                        <label>Currency</label>
-                                        <select
-                                            value={currencyInfo?.code || 'USD'}
-                                            onChange={(e) => setCurrencyInfo({ code: e.target.value, symbol: getCurrencySymbol(e.target.value) })}
-                                            style={{
-                                                fontWeight: '700',
-                                                border: '1px solid var(--border)',
-                                                background: '#eff6ff',
-                                                color: '#2563eb',
-                                                cursor: 'pointer',
-                                            }}
-                                        >
-                                            <option value="INR">₹ INR (Rupee)</option>
-                                            <option value="USD">$ USD (Dollar)</option>
-                                            <option value="EUR">€ EUR (Euro)</option>
-                                            <option value="RUB">₽ RUB (Ruble)</option>
-                                            <option value="JPY">¥ JPY (Yen)</option>
-                                            <option value="GBP">£ GBP (Pound)</option>
-                                        </select>
-                                    </div>
+
                                     <button className="btn btn-primary" onClick={handleAnalyze}>
                                         <Zap size={18} /> Generate Intelligence
                                     </button>
@@ -1089,6 +1049,7 @@ const Dashboard = () => {
 
                     {Object.keys(DEAL_CONFIGS).includes(view) && (
                         <DealRoomView
+                            key={view}
                             dealKey={view}
                             currencyInfo={currencyInfo}
                             setCurrencyInfo={setCurrencyInfo}
