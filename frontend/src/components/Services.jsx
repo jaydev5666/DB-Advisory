@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart4, Briefcase, PieChart, BarChart3, Landmark, ArrowRight, History, Users, FileText } from 'lucide-react';
+import { BarChart4, Briefcase, PieChart, BarChart3, Landmark, ArrowRight, History, Users, FileText, Wallet } from 'lucide-react';
 
 const Services = () => {
     const navigate = useNavigate();
@@ -61,6 +61,7 @@ const Services = () => {
                 <nav className="landing-nav">
                     <a onClick={() => navigate('/')}>Home</a>
                     <a className="active">Services</a>
+                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
                     <a onClick={() => navigate('/about')}>About</a>
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>
@@ -96,10 +97,15 @@ const Services = () => {
             <section className="cta-section">
                 <div className="cta-box glass" style={{ textAlign: 'center' }}>
                     <h2 style={{ fontSize: '48px', marginBottom: '16px' }}>Try the live platform</h2>
-                    <p style={{ marginBottom: '32px' }}>Run an end-to-end deal analysis in seconds.</p>
-                    <button className="btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px', fontSize: '16px' }}>
-                        Launch dashboard
-                    </button>
+                    <p style={{ marginBottom: '32px' }}>Run an end-to-end deal analysis or manage client wealth portfolios in seconds.</p>
+                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+                        <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px', fontSize: '16px' }}>
+                            Launch Deal Analyzer
+                        </button>
+                        <button className="btn btn-primary" onClick={() => navigate('/wealth-portal')} style={{ padding: '16px 32px', fontSize: '16px', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
+                            Launch Wealth Portal
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -111,6 +117,7 @@ const Services = () => {
                 <div className="footer-col">
                     <h4>Platform</h4>
                     <a onClick={() => navigate('/dashboard')}>Deal Analyzer</a>
+                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
                     <a onClick={() => navigate('/services')}>Services</a>
                 </div>
                 <div className="footer-col">

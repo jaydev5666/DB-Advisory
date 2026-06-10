@@ -93,6 +93,7 @@ const CardDetail = () => {
                 <nav className="landing-nav">
                     <a onClick={() => navigate('/')}>Home</a>
                     <a onClick={() => navigate('/services')}>Services</a>
+                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
                     <a onClick={() => navigate('/about')}>About</a>
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>
@@ -143,6 +144,7 @@ const CardDetail = () => {
                 <div className="footer-col">
                     <h4>Platform</h4>
                     <a onClick={() => navigate('/dashboard')}>Deal Analyzer</a>
+                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
                     <a onClick={() => navigate('/services')}>Services</a>
                 </div>
                 <div className="footer-col">

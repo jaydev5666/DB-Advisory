@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart4, ArrowRight, Zap, BarChart, TrendingUp, TrendingDown, Building2, FileSpreadsheet, Shield, Cpu, MoveRight, History, Search, Calendar, Activity } from 'lucide-react';
+import { BarChart4, ArrowRight, Zap, BarChart, TrendingUp, TrendingDown, Building2, FileSpreadsheet, Shield, Cpu, MoveRight, History, Search, Calendar, Activity, Wallet } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol } from '../services/api';
 
@@ -447,6 +447,7 @@ const LandingPage = () => {
                 <nav className="landing-nav">
                     <a className="active" onClick={() => navigate('/')}>Home</a>
                     <a onClick={() => navigate('/services')}>Services</a>
+                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
                     <a onClick={() => navigate('/about')}>About</a>
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>
@@ -474,6 +475,9 @@ const LandingPage = () => {
                     <div className="hero-buttons hero-animate anim-delay-400" style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '16px' }}>
                         <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px' }}>
                             Analyze a Deal <ArrowRight size={18} />
+                        </button>
+                        <button className="btn btn-primary" onClick={() => navigate('/wealth-portal')} style={{ padding: '16px 32px', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
+                            Wealth Portal <Wallet size={18} style={{ marginLeft: '8px', verticalAlign: 'middle' }} />
                         </button>
                         <button className="btn btn-secondary" onClick={() => navigate('/services')} style={{ padding: '16px 32px' }}>
                             Explore Platform

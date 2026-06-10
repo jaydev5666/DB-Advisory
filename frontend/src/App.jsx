@@ -7,6 +7,7 @@ import Contact from './components/Contact';
 import About from './components/About';
 import CardDetail from './components/CardDetail';
 import AdminPanel from './components/AdminPanel';
+import WealthDashboard from './components/WealthDashboard';
 import { api } from './services/api';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -27,6 +28,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/detail/:type" element={<CardDetail />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/wealth-portal" element={<WealthDashboard />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

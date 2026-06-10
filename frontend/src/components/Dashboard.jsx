@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     BarChart4, LayoutDashboard, CreditCard,
     FileText, Zap, TrendingUp, Download, RefreshCw,
-    Globe, Shield, Building2
+    Globe, Shield, Building2, Wallet, Target, Compass, Trash2, Plus, Coins, Sparkles, HelpCircle, Activity, Info
 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol } from '../services/api';
@@ -11,6 +11,7 @@ import {
     AreaChart, Area,
     LineChart, Line,
     BarChart, Bar, Cell,
+    PieChart, Pie, Legend,
     XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
@@ -533,6 +534,7 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
     );
 };
 
+// ── MAIN DASHBOARD COMPONENT ────────────────────────────────────────────
 const Dashboard = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -786,6 +788,7 @@ const Dashboard = () => {
                 <nav className="landing-nav">
                     <a onClick={() => navigate('/')}>Home</a>
                     <a onClick={() => navigate('/services')}>Services</a>
+                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
                     <a onClick={() => navigate('/about')}>About</a>
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>

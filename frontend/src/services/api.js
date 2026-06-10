@@ -120,4 +120,15 @@ export const api = {
         client.post(`/track-visit`),
     getAdminStats: () =>
         client.get(`/admin/stats`),
+
+    // ── Asset & Wealth Management, and Competitor Intelligence ──
+    getUserAssets: () => client.get(`/api/user/assets`),
+    addUserAsset: (data) => client.post(`/api/user/assets`, data),
+    deleteUserAsset: (id) => client.post(`/api/user/assets/delete`, { id }),
+    getUserGoals: () => client.get(`/api/user/wealth/goals`),
+    addUserGoal: (data) => client.post(`/api/user/wealth/goals`, data),
+    deleteUserGoal: (id) => client.post(`/api/user/wealth/goals/delete`, { id }),
+    getWealthAdvisory: (riskProfile) => client.post(`/api/user/wealth/advisory`, { risk_profile: riskProfile }),
+    getCompetitors: () => client.get(`/api/competitors`),
+    getAcquisitions: () => client.get(`/api/competitors/acquisitions`),
 };

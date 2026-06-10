@@ -41,6 +41,334 @@ db = client["db_advisory"]
 users_col = db["users"]
 history_col = db["history"]
 visitors_col = db["visitors"]
+assets_col = db["assets"]
+wealth_goals_col = db["wealth_goals"]
+competitors_col = db["competitor_firms"]
+acquisitions_col = db["acquisitions"]
+
+def auto_seed_competitors():
+    if competitors_col.count_documents({}) == 0:
+        firms = [
+            # Asset Managers
+            {
+                "firmName": "BlackRock",
+                "type": "Asset Management",
+                "globalRank": 1,
+                "totalAUM": 11500000000000,
+                "headquarters": "New York, USA",
+                "primaryStrategy": "Passive Indexing & Aladdin Risk Platform",
+                "techStackFocus": ["AI Risk Management", "Aladdin Risk Platform", "Institutional Portals"],
+                "portfolioAllocation": { "Equities": 55, "Fixed Income": 30, "Alternatives": 10, "Cash": 5 }
+            },
+            {
+                "firmName": "Vanguard Group",
+                "type": "Asset Management",
+                "globalRank": 2,
+                "totalAUM": 10100000000000,
+                "headquarters": "Pennsylvania, USA",
+                "primaryStrategy": "Low-Cost Index Mutual Funds & ETFs",
+                "techStackFocus": ["Robo-Advisory", "Automated Rebalancing", "Retail Hubs"],
+                "portfolioAllocation": { "Equities": 65, "Fixed Income": 25, "Alternatives": 2, "Cash": 8 }
+            },
+            {
+                "firmName": "Fidelity Investments",
+                "type": "Asset Management",
+                "globalRank": 3,
+                "totalAUM": 5300000000000,
+                "headquarters": "Boston, USA",
+                "primaryStrategy": "Active Equity & Retail Services",
+                "techStackFocus": ["Crypto Custody", "Digital Brokerage", "AI Assistants"],
+                "portfolioAllocation": { "Equities": 60, "Fixed Income": 20, "Alternatives": 12, "Cash": 8 }
+            },
+            {
+                "firmName": "State Street Global Advisors",
+                "type": "Asset Management",
+                "globalRank": 4,
+                "totalAUM": 4300000000000,
+                "headquarters": "Boston, USA",
+                "primaryStrategy": "ETF Issuance & SPDR",
+                "techStackFocus": ["Blockchain Settlement", "Institutional Reporting", "API Delivery"],
+                "portfolioAllocation": { "Equities": 70, "Fixed Income": 20, "Alternatives": 3, "Cash": 7 }
+            },
+            {
+                "firmName": "J.P. Morgan Asset Management",
+                "type": "Asset Management",
+                "globalRank": 5,
+                "totalAUM": 3400000000000,
+                "headquarters": "New York, USA",
+                "primaryStrategy": "Multi-Asset & Active Solutions",
+                "techStackFocus": ["Machine Learning Portfolio Design", "Custom Indexing", "Digital Onboarding"],
+                "portfolioAllocation": { "Equities": 50, "Fixed Income": 30, "Alternatives": 15, "Cash": 5 }
+            },
+            {
+                "firmName": "Goldman Sachs Asset Management",
+                "type": "Asset Management",
+                "globalRank": 6,
+                "totalAUM": 2800000000000,
+                "headquarters": "New York, USA",
+                "primaryStrategy": "Alternative Investments & Quantitative Models",
+                "techStackFocus": ["Algorithmic Trading", "AI Alpha Generators", "Institutional Analytics"],
+                "portfolioAllocation": { "Equities": 40, "Fixed Income": 25, "Alternatives": 30, "Cash": 5 }
+            },
+            {
+                "firmName": "Capital Group",
+                "type": "Asset Management",
+                "globalRank": 7,
+                "totalAUM": 2600000000000,
+                "headquarters": "Los Angeles, USA",
+                "primaryStrategy": "Active Mutual Funds & Long-term Growth",
+                "techStackFocus": ["Proprietary Valuation Systems", "Portfolio Modeling Tools", "Client Portal APIs"],
+                "portfolioAllocation": { "Equities": 75, "Fixed Income": 15, "Alternatives": 2, "Cash": 8 }
+            },
+            {
+                "firmName": "Amundi",
+                "type": "Asset Management",
+                "globalRank": 8,
+                "totalAUM": 2300000000000,
+                "headquarters": "Paris, France",
+                "primaryStrategy": "ESG Integration & European Scale",
+                "techStackFocus": ["ESG Rating Engines", "Digital Distribution Platforms", "Open Wealth APIs"],
+                "portfolioAllocation": { "Equities": 45, "Fixed Income": 35, "Alternatives": 12, "Cash": 8 }
+            },
+            {
+                "firmName": "Allianz (PIMCO)",
+                "type": "Asset Management",
+                "globalRank": 9,
+                "totalAUM": 2200000000000,
+                "headquarters": "Munich, Germany",
+                "primaryStrategy": "Fixed-Income & Active Bonds",
+                "techStackFocus": ["Fixed Income Risk Systems", "Macro Trade Analysis Tools", "Institutional APIs"],
+                "portfolioAllocation": { "Equities": 15, "Fixed Income": 75, "Alternatives": 7, "Cash": 3 }
+            },
+            {
+                "firmName": "Brookfield Asset Management",
+                "type": "Asset Management",
+                "globalRank": 10,
+                "totalAUM": 1100000000000,
+                "headquarters": "Toronto, Canada",
+                "primaryStrategy": "Alternative Infrastructure & Tangible Assets",
+                "techStackFocus": ["Renewable Grid Forecasting", "Real Estate Asset Portals", "LPs Co-investment Engine"],
+                "portfolioAllocation": { "Equities": 5, "Fixed Income": 10, "Alternatives": 80, "Cash": 5 }
+            },
+            # Wealth Managers
+            {
+                "firmName": "UBS Global Wealth Management",
+                "type": "Wealth Management",
+                "globalRank": 1,
+                "totalAUM": 6200000000000,
+                "headquarters": "Zurich, Switzerland",
+                "primaryStrategy": "Cross-Border Wealth & Global HNWIs",
+                "techStackFocus": ["Private Wealth Digital Advisors", "Automated Wealth Structuring", "Swiss Digital Vaults"],
+                "portfolioAllocation": { "Equities": 45, "Fixed Income": 30, "Alternatives": 15, "Cash": 10 }
+            },
+            {
+                "firmName": "Morgan Stanley Wealth Management",
+                "type": "Wealth Management",
+                "globalRank": 2,
+                "totalAUM": 5800000000000,
+                "headquarters": "New York, USA",
+                "primaryStrategy": "Advisor-Led Client Solutions & Digital Platform",
+                "techStackFocus": ["Next Best Action AI", "Digital Wealth Platforms", "Client Advisor Bridges"],
+                "portfolioAllocation": { "Equities": 50, "Fixed Income": 28, "Alternatives": 12, "Cash": 10 }
+            },
+            {
+                "firmName": "Bank of America Merrill Lynch",
+                "type": "Wealth Management",
+                "globalRank": 3,
+                "totalAUM": 3800000000000,
+                "headquarters": "Charlotte, USA",
+                "primaryStrategy": "Unified Bank & Wealth Services",
+                "techStackFocus": ["Erica AI Advisor Assistant", "Mobile Wealth Management", "Retirement Benefits Engines"],
+                "portfolioAllocation": { "Equities": 48, "Fixed Income": 32, "Alternatives": 10, "Cash": 10 }
+            },
+            {
+                "firmName": "J.P. Morgan Private Bank",
+                "type": "Wealth Management",
+                "globalRank": 4,
+                "totalAUM": 3100000000000,
+                "headquarters": "New York, USA",
+                "primaryStrategy": "UHNW Bespoke Planning & Lending",
+                "techStackFocus": ["Bespoke Portfolio Customization", "Alternative Asset Pipelines", "UHNW Family Office Hubs"],
+                "portfolioAllocation": { "Equities": 42, "Fixed Income": 25, "Alternatives": 25, "Cash": 8 }
+            },
+            {
+                "firmName": "Charles Schwab Wealth Advisory",
+                "type": "Wealth Management",
+                "globalRank": 5,
+                "totalAUM": 2400000000000,
+                "headquarters": "Texas, USA",
+                "primaryStrategy": "Self-Directed & Hybrid Advice Models",
+                "techStackFocus": ["Robo-Advisory", "Zero-Commission Trading Hubs", "Financial Planning APIs"],
+                "portfolioAllocation": { "Equities": 60, "Fixed Income": 25, "Alternatives": 5, "Cash": 10 }
+            },
+            {
+                "firmName": "Goldman Sachs Private Wealth Management",
+                "type": "Wealth Management",
+                "globalRank": 6,
+                "totalAUM": 1600000000000,
+                "headquarters": "New York, USA",
+                "primaryStrategy": "UHNW Advisory & Co-Investment Programs",
+                "techStackFocus": ["Exclusive Alternative Asset Access", "Family Office Portals", "Risk Stress Testing Apps"],
+                "portfolioAllocation": { "Equities": 35, "Fixed Income": 20, "Alternatives": 40, "Cash": 5 }
+            },
+            {
+                "firmName": "Citi Private Bank",
+                "type": "Wealth Management",
+                "globalRank": 7,
+                "totalAUM": 1000000000000,
+                "headquarters": "New York, USA",
+                "primaryStrategy": "Global HNW & Offshore Investment Access",
+                "techStackFocus": ["Cross-Border Wealth Structuring", "Multi-Currency Platforms", "Offshore Tax Calculators"],
+                "portfolioAllocation": { "Equities": 44, "Fixed Income": 28, "Alternatives": 18, "Cash": 10 }
+            },
+            {
+                "firmName": "BNP Paribas Wealth Management",
+                "type": "Wealth Management",
+                "globalRank": 8,
+                "totalAUM": 550000000000,
+                "headquarters": "Paris, France",
+                "primaryStrategy": "Euro-Zone Private Capital Advisory",
+                "techStackFocus": ["Sustainable Investment Portals", "Private Equity Routing", "European Wealth Bridges"],
+                "portfolioAllocation": { "Equities": 40, "Fixed Income": 35, "Alternatives": 15, "Cash": 10 }
+            },
+            {
+                "firmName": "Julius Baer",
+                "type": "Wealth Management",
+                "globalRank": 9,
+                "totalAUM": 520000000000,
+                "headquarters": "Zurich, Switzerland",
+                "primaryStrategy": "Pure-Play Private Banking & Swiss Wealth Management",
+                "techStackFocus": ["Swiss Security Protocols", "HNW Financial Calculators", "Bespoke Portfolio Dashboards"],
+                "portfolioAllocation": { "Equities": 42, "Fixed Income": 33, "Alternatives": 13, "Cash": 12 }
+            },
+            {
+                "firmName": "HSBC Private Banking",
+                "type": "Wealth Management",
+                "globalRank": 10,
+                "totalAUM": 480000000000,
+                "headquarters": "London, UK",
+                "primaryStrategy": "Asia-Focused HNW Wealth Connections",
+                "techStackFocus": ["Global Wealth Transfer Portals", "International Investment Hubs", "Multi-Jurisdiction Reporting"],
+                "portfolioAllocation": { "Equities": 46, "Fixed Income": 30, "Alternatives": 12, "Cash": 12 }
+            }
+        ]
+        competitors_col.insert_many(firms)
+        print("Competitor firms seeded successfully.")
+    
+    if acquisitions_col.count_documents({}) == 0:
+        # Retrieve firm details to link correct buyers
+        blackrock = competitors_col.find_one({"firmName": "BlackRock"})
+        morgan_stanley = competitors_col.find_one({"firmName": "Morgan Stanley Wealth Management"})
+        ubs = competitors_col.find_one({"firmName": "UBS Global Wealth Management"})
+        brookfield = competitors_col.find_one({"firmName": "Brookfield Asset Management"})
+        allianz = competitors_col.find_one({"firmName": "Allianz (PIMCO)"})
+        jpm_am = competitors_col.find_one({"firmName": "J.P. Morgan Asset Management"})
+        amundi = competitors_col.find_one({"firmName": "Amundi"})
+
+        deals = [
+            {
+                "buyerFirmId": blackrock["_id"] if blackrock else None,
+                "buyerFirmName": "BlackRock",
+                "targetName": "Preqin",
+                "targetCategory": "Fintech/Software",
+                "dealValue": 3200000000,
+                "status": "Completed",
+                "announcementDate": datetime(2024, 7, 1),
+                "strategicIntent": "Integrating private markets data and index solutions into Aladdin to enhance private assets risk stress-testing."
+            },
+            {
+                "buyerFirmId": blackrock["_id"] if blackrock else None,
+                "buyerFirmName": "BlackRock",
+                "targetName": "Global Infrastructure Partners (GIP)",
+                "targetCategory": "Renewable Energy",
+                "dealValue": 12500000000,
+                "status": "Completed",
+                "announcementDate": datetime(2024, 1, 12),
+                "strategicIntent": "Scaling multi-asset infrastructure investing in utility solar, digital networks, and logistics networks globally."
+            },
+            {
+                "buyerFirmId": morgan_stanley["_id"] if morgan_stanley else None,
+                "buyerFirmName": "Morgan Stanley Wealth Management",
+                "targetName": "E*TRADE Financial",
+                "targetCategory": "Competitor Firm",
+                "dealValue": 13000000000,
+                "status": "Completed",
+                "announcementDate": datetime(2020, 2, 20),
+                "strategicIntent": "Acquiring a digital direct-to-consumer brokerage channel to feed downstream advisory and stock plan systems."
+            },
+            {
+                "buyerFirmId": morgan_stanley["_id"] if morgan_stanley else None,
+                "buyerFirmName": "Morgan Stanley Wealth Management",
+                "targetName": "Eaton Vance",
+                "targetCategory": "Competitor Firm",
+                "dealValue": 7000000000,
+                "status": "Completed",
+                "announcementDate": datetime(2020, 10, 8),
+                "strategicIntent": "Enhancing custom indexation capabilities (Parametric) and active fixed-income assets under management."
+            },
+            {
+                "buyerFirmId": ubs["_id"] if ubs else None,
+                "buyerFirmName": "UBS Global Wealth Management",
+                "targetName": "Credit Suisse",
+                "targetCategory": "Competitor Firm",
+                "dealValue": 3200000000,
+                "status": "Completed",
+                "announcementDate": datetime(2023, 3, 19),
+                "strategicIntent": "Consolidating Swiss private banking leadership and creating a global private wealth giant managing over $5 Trillion."
+            },
+            {
+                "buyerFirmId": brookfield["_id"] if brookfield else None,
+                "buyerFirmName": "Brookfield Asset Management",
+                "targetName": "Neoen (French Renewable Giant)",
+                "targetCategory": "Renewable Energy",
+                "dealValue": 6500000000,
+                "status": "Exclusive Talks",
+                "announcementDate": datetime(2024, 5, 30),
+                "strategicIntent": "Acquiring 8 GW of wind, solar, and battery storage assets to accelerate decarbonization strategies."
+            },
+            {
+                "buyerFirmId": brookfield["_id"] if brookfield else None,
+                "buyerFirmName": "Brookfield Asset Management",
+                "targetName": "American Landmark Apartments",
+                "targetCategory": "Real Estate",
+                "dealValue": 1500000000,
+                "status": "Completed",
+                "announcementDate": datetime(2023, 8, 15),
+                "strategicIntent": "Expanding multi-family residential portfolio across high-growth Sun Belt metros in the United States."
+            },
+            {
+                "buyerFirmId": allianz["_id"] if allianz else None,
+                "buyerFirmName": "Allianz (PIMCO)",
+                "targetName": "UOB Asset Management (Singapore)",
+                "targetCategory": "Competitor Firm",
+                "dealValue": 150000000,
+                "status": "Exclusive Talks",
+                "announcementDate": datetime(2024, 4, 10),
+                "strategicIntent": "Gaining local Southeast Asian asset management license and distribution channels through UOB's branch networks."
+            },
+            {
+                "buyerFirmId": jpm_am["_id"] if jpm_am else None,
+                "buyerFirmName": "J.P. Morgan Asset Management",
+                "targetName": "Nutmeg (UK Robo-Advisor)",
+                "targetCategory": "Fintech/Software",
+                "dealValue": 1000000000,
+                "status": "Completed",
+                "announcementDate": datetime(2021, 6, 17),
+                "strategicIntent": "Launching digital wealth offerings in the UK and Europe as part of Chase international retail banking rollout."
+            },
+            {
+                "buyerFirmId": amundi["_id"] if amundi else None,
+                "buyerFirmName": "Amundi",
+                "targetName": "Lyxor Asset Management",
+                "targetCategory": "Competitor Firm",
+                "dealValue": 975000000,
+                "status": "Completed",
+                "announcementDate": datetime(2021, 4, 7),
+                "strategicIntent": "Creating the second largest ETF provider in Europe, boosting passive assets scale to compete with US indexing giants."
+            }
+        ]
+        acquisitions_col.insert_many(deals)
+        print("Acquisitions seeded successfully.")
 
 def init_db():
     # Add default admin user if not exists and ensure admin role from .env
@@ -78,6 +406,7 @@ def init_db():
             users_col.update_one({"_id": admin_user["_id"]}, {"$set": updates})
             
     print("MongoDB connection established and initialized.")
+    auto_seed_competitors()
 
 init_db()
 
@@ -1114,19 +1443,330 @@ def market_index():
                     "pct_change": resp.get('percent_change', 'N/A'),
                     "source":     "Twelve Data"
                 })
-        # Fallback: yfinance
-        stock = yf.Ticker(index)
-        info  = stock.info
-        return jsonify({
-            "symbol":     index,
-            "name":       info.get('shortName', index),
-            "price":      info.get('regularMarketPrice', 'N/A'),
-            "change":     info.get('regularMarketChange', 'N/A'),
-            "pct_change": info.get('regularMarketChangePercent', 'N/A'),
-            "source":     "yfinance"
-        })
     except Exception as e:
         return jsonify({"error": str(e), "symbol": index}), 500
+
+
+# ── New Asset & Wealth Management, and Competitor Intelligence Endpoints ──
+
+@app.route('/api/user/assets', methods=['GET'])
+def get_user_assets():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 401
+    username = logged_user["username"]
+    
+    user_assets = list(assets_col.find({"username": username}))
+    for asset in user_assets:
+        asset["id"] = str(asset["_id"])
+        del asset["_id"]
+        ticker = asset.get("ticker", "").strip()
+        if ticker:
+            try:
+                stock = yf.Ticker(ticker)
+                price = None
+                if hasattr(stock, 'fast_info') and getattr(stock.fast_info, 'last_price', None) is not None:
+                    price = stock.fast_info.last_price
+                else:
+                    price = stock.info.get('currentPrice', None)
+                if price is not None:
+                    asset["current_price"] = round(price, 2)
+                else:
+                    asset["current_price"] = asset.get("purchase_price")
+            except Exception as e:
+                print(f"Error fetching live price for {ticker}: {e}")
+                asset["current_price"] = asset.get("purchase_price")
+        else:
+            asset["current_price"] = asset.get("purchase_price")
+    return jsonify(user_assets)
+
+@app.route('/api/user/assets', methods=['POST'])
+def add_user_asset():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 401
+    username = logged_user["username"]
+    
+    data = request.json
+    name = data.get("name")
+    ticker = data.get("ticker", "").strip()
+    category = data.get("type", "Stock")
+    quantity = float(data.get("quantity", 1))
+    purchase_price = float(data.get("purchase_price", 0))
+    purchase_date = data.get("purchase_date", datetime.utcnow().strftime("%Y-%m-%d"))
+    
+    asset_doc = {
+        "username": username,
+        "name": name,
+        "ticker": ticker,
+        "type": category,
+        "quantity": quantity,
+        "purchase_price": purchase_price,
+        "purchase_date": purchase_date,
+        "created_at": datetime.utcnow()
+    }
+    result = assets_col.insert_one(asset_doc)
+    asset_doc["id"] = str(result.inserted_id)
+    del asset_doc["_id"]
+    return jsonify({"status": "success", "asset": asset_doc})
+
+@app.route('/api/user/assets/delete', methods=['POST'])
+def delete_user_asset():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 401
+    username = logged_user["username"]
+    
+    data = request.json
+    asset_id = data.get("id")
+    if not asset_id:
+        return jsonify({"error": "Missing asset ID"}), 400
+        
+    from bson.objectid import ObjectId
+    res = assets_col.delete_one({"_id": ObjectId(asset_id), "username": username})
+    if res.deleted_count > 0:
+        return jsonify({"status": "success"})
+    return jsonify({"error": "Asset not found or unauthorized"}), 404
+
+@app.route('/api/user/wealth/goals', methods=['GET'])
+def get_user_goals():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 401
+    username = logged_user["username"]
+    
+    user_goals = list(wealth_goals_col.find({"username": username}))
+    for goal in user_goals:
+        goal["id"] = str(goal["_id"])
+        del goal["_id"]
+    return jsonify(user_goals)
+
+@app.route('/api/user/wealth/goals', methods=['POST'])
+def add_user_goal():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 401
+    username = logged_user["username"]
+    
+    data = request.json
+    name = data.get("name")
+    target_amount = float(data.get("target_amount", 0))
+    target_year = int(data.get("target_year", datetime.utcnow().year + 10))
+    current_savings = float(data.get("current_savings", 0))
+    monthly_contribution = float(data.get("monthly_contribution", 0))
+    risk_appetite = data.get("risk_appetite", "Moderate")
+    
+    goal_doc = {
+        "username": username,
+        "name": name,
+        "target_amount": target_amount,
+        "target_year": target_year,
+        "current_savings": current_savings,
+        "monthly_contribution": monthly_contribution,
+        "risk_appetite": risk_appetite,
+        "created_at": datetime.utcnow()
+    }
+    result = wealth_goals_col.insert_one(goal_doc)
+    goal_doc["id"] = str(result.inserted_id)
+    del goal_doc["_id"]
+    return jsonify({"status": "success", "goal": goal_doc})
+
+@app.route('/api/user/wealth/goals/delete', methods=['POST'])
+def delete_user_goal():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 401
+    username = logged_user["username"]
+    
+    data = request.json
+    goal_id = data.get("id")
+    if not goal_id:
+        return jsonify({"error": "Missing goal ID"}), 400
+        
+    from bson.objectid import ObjectId
+    res = wealth_goals_col.delete_one({"_id": ObjectId(goal_id), "username": username})
+    if res.deleted_count > 0:
+        return jsonify({"status": "success"})
+    return jsonify({"error": "Goal not found or unauthorized"}), 404
+
+@app.route('/api/user/wealth/advisory', methods=['POST'])
+def get_wealth_advisory():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 401
+    username = logged_user["username"]
+    
+    data = request.json
+    risk_profile = data.get("risk_profile", "Moderate")
+    
+    assets = list(assets_col.find({"username": username}))
+    goals = list(wealth_goals_col.find({"username": username}))
+    
+    assets_summary = ", ".join([f"{a.get('name')} ({a.get('type')}: {a.get('quantity')} units bought at {a.get('purchase_price')})" for a in assets])
+    if not assets_summary:
+        assets_summary = "No holdings currently registered."
+        
+    goals_summary = ", ".join([f"{g.get('name')} (Target: {g.get('target_amount')} by {g.get('target_year')}, savings: {g.get('current_savings')}, monthly SIP: {g.get('monthly_contribution')})" for g in goals])
+    if not goals_summary:
+        goals_summary = "No financial goals configured yet."
+        
+    prompt = f"""
+    Act as a highly experienced wealth planner and alternative asset portfolio specialist.
+    
+    Analyze the client's current profile:
+    - Risk Appetite: {risk_profile}
+    - Current Asset Holdings: {assets_summary}
+    - Financial Savings Goals: {goals_summary}
+    
+    Generate a detailed financial advisory report. It must be highly customized to their risk profile and goals.
+    Provide standard strategic asset allocation based on risk:
+    - Conservative: Equities 20%, Fixed Income 60%, Gold 10%, Cash 10%
+    - Moderate: Equities 50%, Fixed Income 30%, Alternatives/Crypto 10%, Cash 10%
+    - Aggressive: Equities 75%, Fixed Income 10%, Alternatives/Crypto 10%, Cash 5%
+    
+    Calculate or estimate compounding feasibility for their goals and give actionable guidance.
+    
+    Return ONLY a valid JSON object matching this structure:
+    {{
+      "recommendedAllocation": {{
+        "Equities": 50,
+        "Fixed Income": 30,
+        "Alternatives": 10,
+        "Cash": 10
+      }},
+      "goalFeasibility": "A detailed assessment of whether they will hit their goals based on target years, monthly SIPs, and current savings under historical average returns.",
+      "strategicAdvice": [
+        "Strategy point 1 (customized to their profile)",
+        "Strategy point 2",
+        "Strategy point 3",
+        "Strategy point 4"
+      ],
+      "riskMitigation": [
+        "Risk advice point 1",
+        "Risk advice point 2"
+      ]
+    }}
+    
+    Return ONLY valid JSON. No markdown, no backticks, no explanations.
+    """
+    
+    alloc_map = {
+        "Conservative": {"Equities": 20, "Fixed Income": 60, "Alternatives": 10, "Cash": 10},
+        "Moderate": {"Equities": 50, "Fixed Income": 30, "Alternatives": 10, "Cash": 10},
+        "Aggressive": {"Equities": 75, "Fixed Income": 10, "Alternatives": 10, "Cash": 5}
+    }
+    fallback_alloc = alloc_map.get(risk_profile, alloc_map["Moderate"])
+    fallback_advisory = {
+        "recommendedAllocation": fallback_alloc,
+        "goalFeasibility": "Based on a standard historical compounding rate of 8-12%, your wealth goals are partially on-track. Adding a consistent monthly SIP will accelerate compounding and improve probability of meeting your long-term target amounts.",
+        "strategicAdvice": [
+            f"Implement a structured rebalancing schedule to maintain your {risk_profile} allocation target.",
+            "Diversify into global low-cost index ETFs to capture broader equity market growth.",
+            "Establish a liquid emergency fund covering 6 months of living expenses before deploying capital to high-volatility alternative assets.",
+            "Utilize tax-sheltered accounts (like PPF, 401k or ELSS depending on region) to optimize compounding efficiency."
+        ],
+        "riskMitigation": [
+            "Maintain portfolio diversification; avoid over-allocating more than 5% of total wealth to speculative assets like cryptocurrency.",
+            "Ensure asset maturities align with goal horizons to avoid forced liquidations during market downturns."
+        ]
+    }
+    
+    if not API_KEY or API_KEY == "sk-proj-your-real-api-key-goes-here...":
+        return jsonify(fallback_advisory)
+        
+    is_openrouter = API_KEY.startswith("sk-or")
+    is_gemini = API_KEY.startswith("AIzaSy")
+    
+    try:
+        if is_gemini:
+            url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+            payload = {
+                "contents": [{
+                    "parts": [{"text": prompt}]
+                }]
+            }
+            response = requests.post(url, json=payload, timeout=10)
+            res_json = response.json()
+            
+            if 'candidates' in res_json and res_json['candidates']:
+                content = res_json['candidates'][0]['content']['parts'][0]['text']
+                content = content.replace("```json", "").replace("```", "").strip()
+                return jsonify(json.loads(content))
+            return jsonify(fallback_advisory)
+            
+        url = "https://openrouter.ai/api/v1/chat/completions" if is_openrouter else "https://api.openai.com/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json"
+        }
+        if is_openrouter:
+            headers["HTTP-Referer"] = "http://localhost:5174"
+            headers["X-Title"] = "DB Advisory Platform"
+            
+        response = requests.post(
+            url,
+            headers=headers,
+            json={
+                "model": "openai/gpt-4o-mini" if is_openrouter else "gpt-4o-mini",
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {"type": "json_object"}
+            },
+            timeout=10
+        )
+        content = response.json()['choices'][0]['message']['content']
+        return jsonify(json.loads(content))
+    except Exception as e:
+        print(f"Advisory generation failed: {e}")
+        return jsonify(fallback_advisory)
+
+@app.route('/api/competitors', methods=['GET'])
+def get_competitor_firms():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 403
+        
+    firms = list(competitors_col.find().sort("globalRank", 1))
+    for f in firms:
+        f["id"] = str(f["_id"])
+        del f["_id"]
+    return jsonify(firms)
+
+@app.route('/api/competitors/acquisitions', methods=['GET'])
+def get_competitor_acquisitions():
+    logged_user = get_logged_in_user()
+    if not logged_user:
+        return jsonify({"error": "Unauthorized"}), 403
+        
+    deals = list(acquisitions_col.find().sort("announcementDate", -1))
+    for d in deals:
+        d["id"] = str(d["_id"])
+        del d["_id"]
+        if d.get("buyerFirmId"):
+            d["buyerFirmId"] = str(d["buyerFirmId"])
+        if d.get("announcementDate"):
+            d["announcementDate"] = d["announcementDate"].strftime("%Y-%m-%d")
+            
+    # Build macro statistics
+    pipeline = [
+        {"$group": {
+            "_id": "$targetCategory",
+            "totalValue": {"$sum": "$dealValue"},
+            "count": {"$sum": 1}
+        }}
+    ]
+    stats = list(acquisitions_col.aggregate(pipeline))
+    stats_formatted = []
+    for s in stats:
+        stats_formatted.append({
+            "category": s["_id"],
+            "totalValue": s["totalValue"],
+            "count": s["count"]
+        })
+        
+    return jsonify({
+        "acquisitions": deals,
+        "macroTrends": stats_formatted
+    })
 
 
 if __name__ == "__main__":
