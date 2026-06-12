@@ -575,8 +575,13 @@ const Dashboard = () => {
 
     useEffect(() => {
         const savedUser = localStorage.getItem('db_user');
-        if (savedUser) {
+        const savedToken = localStorage.getItem('db_token');
+        if (savedUser && savedToken) {
             setUser(JSON.parse(savedUser));
+        } else {
+            localStorage.removeItem('db_user');
+            localStorage.removeItem('db_token');
+            setUser(null);
         }
 
         // Restore last analysis data
@@ -648,9 +653,19 @@ const Dashboard = () => {
         try {
             const res = await api.signup(email, password);
             if (res.data.status === 'success') {
-                const userData = { username: email };
-                localStorage.setItem('userSession', JSON.stringify(userData));
-                setUser(userData);
+                if (res.data.token) {
+                    localStorage.setItem('db_token', res.data.token);
+                    localStorage.setItem('db_user', JSON.stringify(res.data.user || { username: email }));
+                    setUser(res.data.user || { username: email });
+                } else {
+                    // Fallback to auto-login
+                    const loginRes = await api.login(email, password);
+                    if (loginRes.data.status === 'success') {
+                        localStorage.setItem('db_token', loginRes.data.token);
+                        localStorage.setItem('db_user', JSON.stringify(loginRes.data.user));
+                        setUser(loginRes.data.user);
+                    }
+                }
                 setError('');
             } else {
                 setError(res.data.message || 'Signup failed');

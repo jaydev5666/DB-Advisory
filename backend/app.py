@@ -976,7 +976,19 @@ def signup():
     
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     users_col.insert_one({"username": username, "password": hashed, "created_at": datetime.utcnow()})
-    return jsonify({"status": "success", "message": "Account created successfully"})
+    
+    # Auto-generate token on signup
+    token = jwt.encode({
+        'username': username,
+        'exp': datetime.utcnow() + timedelta(hours=24)
+    }, JWT_SECRET, algorithm="HS256")
+    
+    return jsonify({
+        "status": "success",
+        "message": "Account created successfully",
+        "token": token,
+        "user": {"username": username, "name": username, "role": "user"}
+    })
 
 @app.route('/google-login', methods=['POST'])
 def google_login():
