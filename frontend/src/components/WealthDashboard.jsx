@@ -50,6 +50,36 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
 
     const fetchAssets = async () => {
         setLoadingAssets(true);
+        const token = localStorage.getItem('db_token');
+        if (!token) {
+            try {
+                const localAssetsStr = localStorage.getItem('local_assets');
+                const localAssets = localAssetsStr ? JSON.parse(localAssetsStr) : [];
+                // Fetch live prices for assets with tickers
+                const updatedAssets = await Promise.all(localAssets.map(async (asset) => {
+                    const ticker = (asset.ticker || '').trim();
+                    if (ticker) {
+                        try {
+                            const res = await api.getLiveQuote(ticker);
+                            const price = res.data.price || res.data.currentPrice;
+                            if (price && price !== 'N/A') {
+                                return { ...asset, current_price: parseFloat(price) };
+                            }
+                        } catch (err) {
+                            console.error("Failed to fetch live quote for", ticker, err);
+                        }
+                    }
+                    return { ...asset, current_price: asset.current_price || asset.purchase_price };
+                }));
+                setAssets(updatedAssets);
+            } catch (err) {
+                console.error("Failed to load local assets", err);
+            } finally {
+                setLoadingAssets(false);
+            }
+            return;
+        }
+
         try {
             const res = await api.getUserAssets();
             setAssets(res.data || []);
@@ -62,6 +92,20 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
 
     const fetchGoals = async () => {
         setLoadingGoals(true);
+        const token = localStorage.getItem('db_token');
+        if (!token) {
+            try {
+                const localGoalsStr = localStorage.getItem('local_goals');
+                const localGoals = localGoalsStr ? JSON.parse(localGoalsStr) : [];
+                setGoals(localGoals);
+            } catch (err) {
+                console.error("Failed to load local goals", err);
+            } finally {
+                setLoadingGoals(false);
+            }
+            return;
+        }
+
         try {
             const res = await api.getUserGoals();
             setGoals(res.data || []);
@@ -80,6 +124,39 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
     const handleAddAsset = async (e) => {
         e.preventDefault();
         if (!assetName) return;
+
+        const token = localStorage.getItem('db_token');
+        if (!token) {
+            try {
+                const localAssetsStr = localStorage.getItem('local_assets');
+                const localAssets = localAssetsStr ? JSON.parse(localAssetsStr) : [];
+                
+                const newAsset = {
+                    id: 'asset_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    name: assetName,
+                    ticker: assetTicker.trim(),
+                    type: assetType,
+                    quantity: parseFloat(assetQty) || 1,
+                    purchase_price: parseFloat(assetPrice) || 0,
+                    purchase_date: assetDate,
+                    current_price: parseFloat(assetPrice) || 0
+                };
+                
+                localAssets.push(newAsset);
+                localStorage.setItem('local_assets', JSON.stringify(localAssets));
+                
+                setAssetName('');
+                setAssetTicker('');
+                setAssetType('Stock');
+                setAssetQty('');
+                setAssetPrice('');
+                fetchAssets();
+            } catch (err) {
+                alert("Failed to add asset locally");
+            }
+            return;
+        }
+
         try {
             const res = await api.addUserAsset({
                 name: assetName,
@@ -104,6 +181,21 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
 
     const handleDeleteAsset = async (id) => {
         if (!window.confirm("Are you sure you want to delete this asset?")) return;
+
+        const token = localStorage.getItem('db_token');
+        if (!token) {
+            try {
+                const localAssetsStr = localStorage.getItem('local_assets');
+                let localAssets = localAssetsStr ? JSON.parse(localAssetsStr) : [];
+                localAssets = localAssets.filter(a => a.id !== id);
+                localStorage.setItem('local_assets', JSON.stringify(localAssets));
+                fetchAssets();
+            } catch (err) {
+                alert("Failed to delete asset locally");
+            }
+            return;
+        }
+
         try {
             const res = await api.deleteUserAsset(id);
             if (res.data.status === 'success') {
@@ -117,6 +209,39 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
     const handleAddGoal = async (e) => {
         e.preventDefault();
         if (!goalName) return;
+
+        const token = localStorage.getItem('db_token');
+        if (!token) {
+            try {
+                const localGoalsStr = localStorage.getItem('local_goals');
+                const localGoals = localGoalsStr ? JSON.parse(localGoalsStr) : [];
+                
+                const newGoal = {
+                    id: 'goal_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    name: goalName,
+                    target_amount: parseFloat(goalTarget) || 0,
+                    target_year: parseInt(goalYear) || (new Date().getFullYear() + 10),
+                    current_savings: parseFloat(goalSavings) || 0,
+                    monthly_contribution: parseFloat(goalSIP) || 0,
+                    risk_appetite: goalRisk
+                };
+                
+                localGoals.push(newGoal);
+                localStorage.setItem('local_goals', JSON.stringify(localGoals));
+                
+                setGoalName('');
+                setGoalTarget('');
+                setGoalYear(new Date().getFullYear() + 10);
+                setGoalSavings('');
+                setGoalSIP('');
+                setGoalRisk('Moderate');
+                fetchGoals();
+            } catch (err) {
+                alert("Failed to add goal locally");
+            }
+            return;
+        }
+
         try {
             const res = await api.addUserGoal({
                 name: goalName,
@@ -142,6 +267,21 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
 
     const handleDeleteGoal = async (id) => {
         if (!window.confirm("Are you sure you want to delete this goal?")) return;
+
+        const token = localStorage.getItem('db_token');
+        if (!token) {
+            try {
+                const localGoalsStr = localStorage.getItem('local_goals');
+                let localGoals = localGoalsStr ? JSON.parse(localGoalsStr) : [];
+                localGoals = localGoals.filter(g => g.id !== id);
+                localStorage.setItem('local_goals', JSON.stringify(localGoals));
+                fetchGoals();
+            } catch (err) {
+                alert("Failed to delete goal locally");
+            }
+            return;
+        }
+
         try {
             const res = await api.deleteUserGoal(id);
             if (res.data.status === 'success') {
@@ -156,7 +296,17 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
         setLoadingAdvisory(true);
         setAdvisoryReport(null);
         try {
-            const res = await api.getWealthAdvisory(advisoryRisk);
+            const token = localStorage.getItem('db_token');
+            let res;
+            if (!token) {
+                const localAssetsStr = localStorage.getItem('local_assets');
+                const localAssets = localAssetsStr ? JSON.parse(localAssetsStr) : [];
+                const localGoalsStr = localStorage.getItem('local_goals');
+                const localGoals = localGoalsStr ? JSON.parse(localGoalsStr) : [];
+                res = await api.getWealthAdvisory(advisoryRisk, localAssets, localGoals);
+            } else {
+                res = await api.getWealthAdvisory(advisoryRisk);
+            }
             setAdvisoryReport(res.data);
         } catch (err) {
             alert("Failed to generate advisory report");
@@ -686,7 +836,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
         setLoadingFirms(true);
         try {
             const res = await api.getCompetitors();
-            setFirms(res.data || []);
+            setFirms(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error("Failed to load firms", err);
         } finally {
@@ -698,8 +848,9 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
         setLoadingAcquisitions(true);
         try {
             const res = await api.getAcquisitions();
-            setAcquisitions(res.data.acquisitions || []);
-            setMacroTrends(res.data.macroTrends || []);
+            const data = res.data || {};
+            setAcquisitions(Array.isArray(data.acquisitions) ? data.acquisitions : []);
+            setMacroTrends(Array.isArray(data.macroTrends) ? data.macroTrends : []);
         } catch (err) {
             console.error("Failed to load acquisitions", err);
         } finally {
@@ -784,7 +935,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
                     onClick={() => setSubTab('simulator')} 
                     style={{ padding: '8px 20px', borderRadius: '6px', border: 'none', background: subTab === 'simulator' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700', fontSize: '14px' }}
                 >
-                    <LineChart size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} /> Fee & Route Simulator
+                    <TrendingUp size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} /> Fee & Route Simulator
                 </button>
             </div>
 
@@ -855,7 +1006,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
                                                         <td style={{ fontWeight: '700' }}>{formatMoney(f.totalAUM, currentRate)}</td>
                                                         <td>
                                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                                                                {f.techStackFocus.map((tech, i) => (
+                                                                {(f.techStackFocus || []).map((tech, i) => (
                                                                     <span key={i} style={{ fontSize: '10px', background: 'var(--surface-dim)', color: 'var(--text-muted)', padding: '2px 8px', borderRadius: '100px', fontWeight: '600' }}>
                                                                         {tech}
                                                                     </span>
@@ -930,7 +1081,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
                                     {acquisitions.map((deal) => (
                                         <div key={deal.id} style={{ padding: '16px', background: 'rgba(0,0,0,0.01)', border: '1px solid var(--border)', borderRadius: '8px', position: 'relative' }}>
                                             <div style={{ position: 'absolute', right: '16px', top: '16px', background: deal.status === 'Completed' ? '#dcfce7' : '#fef3c7', color: deal.status === 'Completed' ? '#166534' : '#d97706', fontSize: '10px', fontWeight: '800', padding: '2px 8px', borderRadius: '100px' }}>
-                                                {deal.status.toUpperCase()}
+                                                {(deal.status || '').toUpperCase()}
                                             </div>
                                             <div style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{deal.targetCategory}</div>
                                             <h5 style={{ fontSize: '16px', fontWeight: '800', margin: '4px 0 6px', color: 'var(--primary)' }}>

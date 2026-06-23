@@ -1604,16 +1604,18 @@ def delete_user_goal():
 @app.route('/api/user/wealth/advisory', methods=['POST'])
 def get_wealth_advisory():
     logged_user = get_logged_in_user()
-    if not logged_user:
-        return jsonify({"error": "Unauthorized"}), 401
-    username = logged_user["username"]
-    
-    data = request.json
+    data = request.json or {}
     risk_profile = data.get("risk_profile", "Moderate")
     
-    assets = list(assets_col.find({"username": username}))
-    goals = list(wealth_goals_col.find({"username": username}))
-    
+    if logged_user:
+        username = logged_user["username"]
+        assets = list(assets_col.find({"username": username}))
+        goals = list(wealth_goals_col.find({"username": username}))
+    else:
+        # Guest mode where assets and goals are passed in request body
+        assets = data.get("assets", [])
+        goals = data.get("goals", [])
+        
     assets_summary = ", ".join([f"{a.get('name')} ({a.get('type')}: {a.get('quantity')} units bought at {a.get('purchase_price')})" for a in assets])
     if not assets_summary:
         assets_summary = "No holdings currently registered."
@@ -1733,10 +1735,6 @@ def get_wealth_advisory():
 
 @app.route('/api/competitors', methods=['GET'])
 def get_competitor_firms():
-    logged_user = get_logged_in_user()
-    if not logged_user:
-        return jsonify({"error": "Unauthorized"}), 403
-        
     firms = list(competitors_col.find().sort("globalRank", 1))
     for f in firms:
         f["id"] = str(f["_id"])
@@ -1745,10 +1743,6 @@ def get_competitor_firms():
 
 @app.route('/api/competitors/acquisitions', methods=['GET'])
 def get_competitor_acquisitions():
-    logged_user = get_logged_in_user()
-    if not logged_user:
-        return jsonify({"error": "Unauthorized"}), 403
-        
     deals = list(acquisitions_col.find().sort("announcementDate", -1))
     for d in deals:
         d["id"] = str(d["_id"])

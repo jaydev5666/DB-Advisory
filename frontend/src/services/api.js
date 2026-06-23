@@ -23,11 +23,14 @@ client.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-        // Clear invalid session
-        localStorage.removeItem('db_user');
-        localStorage.removeItem('db_token');
-        // Force a page reload to trigger redirect to sign-in
-        window.location.reload();
+        const token = localStorage.getItem('db_token');
+        if (token) {
+            // Clear invalid session
+            localStorage.removeItem('db_user');
+            localStorage.removeItem('db_token');
+            // Force a page reload to trigger redirect to sign-in
+            window.location.reload();
+        }
     }
     return Promise.reject(error);
 });
@@ -142,7 +145,7 @@ export const api = {
     getUserGoals: () => client.get(`/api/user/wealth/goals`),
     addUserGoal: (data) => client.post(`/api/user/wealth/goals`, data),
     deleteUserGoal: (id) => client.post(`/api/user/wealth/goals/delete`, { id }),
-    getWealthAdvisory: (riskProfile) => client.post(`/api/user/wealth/advisory`, { risk_profile: riskProfile }),
+    getWealthAdvisory: (riskProfile, assets, goals) => client.post(`/api/user/wealth/advisory`, { risk_profile: riskProfile, assets, goals }),
     getCompetitors: () => client.get(`/api/competitors`),
     getAcquisitions: () => client.get(`/api/competitors/acquisitions`),
 };
