@@ -6,7 +6,7 @@ const CardDetail = () => {
     const { type } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({ username: 'guest', name: 'Guest User', role: 'user' });
     const data = location.state?.data;
 
     useEffect(() => {
@@ -14,7 +14,7 @@ const CardDetail = () => {
         if (savedUser) {
             setUser(JSON.parse(savedUser));
         } else {
-            navigate('/dashboard');
+            setUser({ username: 'guest', name: 'Guest User', role: 'user' });
         }
         window.scrollTo(0, 0);
     }, [navigate]);

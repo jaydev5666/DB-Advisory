@@ -4,18 +4,20 @@ import { BarChart4 } from 'lucide-react';
 
 const About = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({ username: 'guest', name: 'Guest User', role: 'user' });
 
     useEffect(() => {
         const savedUser = localStorage.getItem('db_user');
         if (savedUser) {
             setUser(JSON.parse(savedUser));
+        } else {
+            setUser({ username: 'guest', name: 'Guest User', role: 'user' });
         }
     }, []);
 
     const handleSignOut = () => {
         localStorage.removeItem('db_user');
-        setUser(null);
+        setUser({ username: 'guest', name: 'Guest User', role: 'user' });
         navigate('/');
     };
 
@@ -33,10 +35,10 @@ const About = () => {
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>
                 <div className="header-actions">
-                    {user ? (
+                    {user && user.username !== 'guest' ? (
                         <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={handleSignOut}>Sign out</button>
                     ) : (
-                        <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={() => navigate('/dashboard')}>Sign in</button>
+                        <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>Launch Analyzer</button>
                     )}
                 </div>
             </header>

@@ -1101,7 +1101,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
 // ── MAIN WEALTH DASHBOARD COMPONENT ──────────────────────────────────────
 const WealthDashboard = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({ username: 'guest', name: 'Guest User', role: 'user' });
     const [view, setView] = useState('wealth_center'); // default to wealth center
     const [authMode, setAuthMode] = useState('signin');
 
@@ -1131,7 +1131,7 @@ const WealthDashboard = () => {
         } else {
             localStorage.removeItem('db_user');
             localStorage.removeItem('db_token');
-            setUser(null);
+            setUser({ username: 'guest', name: 'Guest User', role: 'user' });
         }
     }, []);
 
@@ -1215,7 +1215,7 @@ const WealthDashboard = () => {
     const handleSignOut = () => {
         localStorage.removeItem('db_user');
         localStorage.removeItem('db_token');
-        setUser(null);
+        setUser({ username: 'guest', name: 'Guest User', role: 'user' });
         navigate('/');
     };
 
@@ -1290,7 +1290,11 @@ const WealthDashboard = () => {
                     <a onClick={() => navigate('/contact')}>Contact</a>
                 </nav>
                 <div className="header-actions">
-                    <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={handleSignOut}>Sign out</button>
+                    {user.username !== 'guest' ? (
+                        <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={handleSignOut}>Sign out</button>
+                    ) : (
+                        <button className="btn btn-secondary" onClick={() => navigate('/')}>Home</button>
+                    )}
                 </div>
             </header>
 
@@ -1321,8 +1325,14 @@ const WealthDashboard = () => {
                         </div>
                     </nav>
                     <div className="sidebar-footer" style={{ marginTop: 'auto' }}>
-                        <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Logged in as <strong>{user.username}</strong></p>
-                        <button className="btn btn-secondary full-width" style={{ marginTop: '10px' }} onClick={handleSignOut}>Sign Out</button>
+                        {user.username !== 'guest' ? (
+                            <>
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Logged in as <strong>{user.username}</strong></p>
+                                <button className="btn btn-secondary full-width" style={{ marginTop: '10px' }} onClick={handleSignOut}>Sign Out</button>
+                            </>
+                        ) : (
+                            <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Platform Access: <strong>Public</strong></p>
+                        )}
                     </div>
                 </aside>
 
