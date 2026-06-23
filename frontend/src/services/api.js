@@ -18,6 +18,20 @@ client.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
+// Add a response interceptor to handle expired/invalid tokens
+client.interceptors.response.use((response) => {
+    return response;
+}, (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        // Clear invalid session
+        localStorage.removeItem('db_user');
+        localStorage.removeItem('db_token');
+        // Force a page reload to trigger redirect to sign-in
+        window.location.reload();
+    }
+    return Promise.reject(error);
+});
+
 // ── Currency config by country code ──────────────────────────
 export const CURRENCY_MAP = {
     IN: { symbol: '₹', code: 'INR', name: 'Indian Rupee' },
