@@ -35,16 +35,18 @@ const MarketChartWidget = () => {
         setError('');
         try {
             const res = await api.getChartData(symbol, p);
-            // Backend now returns {data: [...], currency: "USD"/"INR"/etc.}
             const payload = res.data;
             const chartArr = payload?.data || (Array.isArray(payload) ? payload : []);
             const nativeCurrency = payload?.currency || 'USD';
             if (chartArr.length > 0) {
                 setData(chartArr);
                 setStockCurrency(nativeCurrency);
-                setTicker(symbol);
+                const resolvedLabel = payload?.name 
+                    ? (payload.name.toUpperCase().includes(symbol.toUpperCase()) ? payload.name : `${payload.name} (${payload.ticker || symbol})`)
+                    : (payload?.ticker || symbol);
+                setTicker(resolvedLabel);
             } else {
-                setError('No data found. Try a different ticker.');
+                setError('No data found for this search. Try another company name.');
             }
         } catch {
             setError('Failed to fetch data.');
@@ -75,7 +77,7 @@ const MarketChartWidget = () => {
             <div style={{ maxWidth:'1100px', margin:'0 auto' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'32px', flexWrap:'wrap', gap:'16px' }}>
                     <div>
-                        <div style={{ fontSize:'12px', fontWeight:700, letterSpacing:'0.1em', color:'var(--primary)', marginBottom:'8px' }}>LIVE MARKET CHART</div>
+                        <div style={{ fontSize:'12px', fontWeight: 700, letterSpacing:'0.1em', color:'var(--primary)', marginBottom:'8px' }}>LIVE MARKET CHART</div>
                         <h2 style={{ fontSize:'32px', fontWeight:800, margin:0 }}>Track any stock, live.</h2>
                         <p style={{ color:'var(--text-muted)', marginTop:'6px' }}>
                             Showing in <strong>{displayCurrency}</strong>
@@ -91,10 +93,10 @@ const MarketChartWidget = () => {
                             <Search size={14} style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', color:'var(--text-muted)' }} />
                             <input
                                 value={input}
-                                onChange={e => setInput(e.target.value.toUpperCase())}
+                                onChange={e => setInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && fetchChart(input, period)}
-                                placeholder="TICKER (e.g. RELIANCE.NS)"
-                                style={{ paddingLeft:'30px', paddingRight:'12px', height:'40px', borderRadius:'8px', border:'1px solid var(--border)', fontSize:'13px', width:'220px', background:'#fff' }}
+                                placeholder="Search company or stock (e.g. CANARAHLIFE, Tata Motors, Reliance)..."
+                                style={{ paddingLeft:'30px', paddingRight:'12px', height:'40px', borderRadius:'8px', border:'1px solid var(--border)', fontSize:'13px', width:'340px', background:'#fff' }}
                             />
                         </div>
                         <button
