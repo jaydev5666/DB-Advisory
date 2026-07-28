@@ -41,6 +41,7 @@ const MarketChartWidget = () => {
             if (chartArr.length > 0) {
                 setData(chartArr);
                 setStockCurrency(nativeCurrency);
+                setDisplayCurrency(nativeCurrency);
                 const resolvedLabel = payload?.name 
                     ? (payload.name.toUpperCase().includes(symbol.toUpperCase()) ? payload.name : `${payload.name} (${payload.ticker || symbol})`)
                     : (payload?.ticker || symbol);

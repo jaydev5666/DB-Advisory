@@ -876,7 +876,14 @@ def resolve_company_ticker(company_query):
 
     # 3. Check if input is ALREADY a valid ticker (e.g. AAPL, RELIANCE.NS, TCS.NS)
     if '.' in query_upper or len(query_upper) <= 5:
-        return query_upper, query, detect_currency_by_ticker(query_upper)
+        try:
+            test_stock = yf.Ticker(query_upper)
+            hist = test_stock.history(period="5d")
+            if not hist.empty:
+                s_name = test_stock.info.get('shortName', query)
+                return query_upper, s_name, detect_currency_by_ticker(query_upper)
+        except Exception:
+            pass
 
     # 4. Twelve Data Symbol Search API
     if TWELVE_DATA_KEY:
@@ -940,16 +947,78 @@ def resolve_company_ticker(company_query):
 
     # 7. Suffix tests for Indian equity names
     for suffix in ['.NS', '.BO']:
-        test_sym = f"{clean_q}{suffix}"
-        return test_sym, f"{query.title()}", 'INR'
+        try:
+            test_sym = f"{clean_q}{suffix}"
+            test_stock = yf.Ticker(test_sym)
+            hist = test_stock.history(period="5d")
+            if not hist.empty:
+                return test_sym, f"{query.title()}", 'INR'
+        except Exception:
+            pass
 
     return query_upper, query, detect_currency_by_ticker(query_upper)
 
-def generate_synthetic_chart(company_query, ticker, period="1Y"):
+def get_current_stock_price(resolved_ticker):
+    # 1. Try Twelve Data quote first
+    if TWELVE_DATA_KEY:
+        try:
+            clean_sym = resolved_ticker
+            exch_param = ""
+            if '.NS' in resolved_ticker:
+                clean_sym = resolved_ticker.replace('.NS', '')
+                exch_param = "&exchange=NSE"
+            elif '.BO' in resolved_ticker:
+                clean_sym = resolved_ticker.replace('.BO', '')
+                exch_param = "&exchange=BSE"
+            url = f"https://api.twelvedata.com/quote?symbol={clean_sym}{exch_param}&apikey={TWELVE_DATA_KEY}"
+            resp = requests.get(url, timeout=4).json()
+            if resp.get('status') != 'error' and 'close' in resp:
+                return float(resp['close'])
+        except Exception:
+            pass
+
+    # 2. Try Alpha Vantage global quote
+    if ALPHA_VANTAGE_KEY:
+        try:
+            url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={resolved_ticker}&apikey={ALPHA_VANTAGE_KEY}"
+            resp = requests.get(url, timeout=4).json()
+            quote = resp.get('Global Quote', {})
+            if quote and '05. price' in quote:
+                return float(quote['05. price'])
+        except Exception:
+            pass
+
+    # 3. Try yfinance fast info
+    try:
+        stock = yf.Ticker(resolved_ticker)
+        price = stock.fast_info.get('lastPrice') or stock.info.get('currentPrice') or stock.info.get('regularMarketPrice')
+        if price:
+            return float(price)
+    except Exception:
+        pass
+
+    return None
+
+def generate_synthetic_chart(company_query, ticker, period="1Y", base_price=None):
     seed = sum(ord(c) for c in company_query)
     random.seed(seed)
 
-    base_price = 420.0 if any(x in company_query.upper() for x in ['CANARA', 'HDFC', 'TATA', 'RELIANCE', 'SBI', 'ICICI', 'INR']) else 185.0
+    if not base_price:
+        # Check alias base prices or fallback defaults
+        q_upper = company_query.upper()
+        if any(x in q_upper for x in ['TCS', 'TATA CONSULTANCY']):
+            base_price = 4250.0
+        elif any(x in q_upper for x in ['RELIANCE', 'RIL']):
+            base_price = 2450.0
+        elif any(x in q_upper for x in ['INFY', 'INFOSYS']):
+            base_price = 1850.0
+        elif any(x in q_upper for x in ['TATAMOTORS', 'TATA MOTORS']):
+            base_price = 950.0
+        elif any(x in q_upper for x in ['CANARA', 'CANBK']):
+            base_price = 115.0
+        else:
+            base_price = 420.0 if any(x in q_upper for x in ['HDFC', 'SBI', 'ICICI', 'INR']) else 185.0
+
     now = datetime.now()
     points = 30
     dates = [(now - timedelta(days=(points - 1 - i) * 12)).strftime("%b %Y") for i in range(points)]
@@ -967,90 +1036,86 @@ def generate_synthetic_chart(company_query, ticker, period="1Y"):
 def get_historical_data(company_query, period="1y"):
     try:
         period_map = {
-            "1D": {"interval": "5min", "outputsize": "78", "format": "%I:%M %p"},
-            "1W": {"interval": "1h", "outputsize": "35", "format": "%a %I %p"},
-            "3M": {"interval": "1day", "outputsize": "65", "format": "%b %d"},
-            "6M": {"interval": "1day", "outputsize": "130", "format": "%b %d"},
-            "1Y": {"interval": "1day", "outputsize": "260", "format": "%b %Y"},
-            "5Y": {"interval": "1week", "outputsize": "260", "format": "%Y"},
+            "1D": {"period": "1d", "interval": "5m", "format": "%I:%M %p"},
+            "1W": {"period": "5d", "interval": "1h", "format": "%a %I %p"},
+            "3M": {"period": "3mo", "interval": "1d", "format": "%b %d"},
+            "6M": {"period": "6mo", "interval": "1d", "format": "%b %d"},
+            "1Y": {"period": "1y", "interval": "1d", "format": "%b %Y"},
+            "5Y": {"period": "5y", "interval": "1wk", "format": "%Y"},
         }
         p_info = period_map.get(period.upper(), period_map["1Y"])
 
         resolved_ticker, company_name, stock_currency = resolve_company_ticker(company_query)
 
-        # Separate symbol and exchange for Twelve Data
-        symbol = resolved_ticker
-        exchange = None
-        if resolved_ticker.endswith('.NS'):
-            symbol = resolved_ticker[:-3]
-            exchange = 'NSE'
-        elif resolved_ticker.endswith('.BO'):
-            symbol = resolved_ticker[:-3]
-            exchange = 'BSE'
+        # Attempt 1: yfinance
+        stock = yf.Ticker(resolved_ticker)
+        hist = stock.history(period=p_info["period"], interval=p_info["interval"])
+
+        # Attempt 2: If resolved_ticker is empty, fallback to company_query directly
+        if hist.empty and resolved_ticker != company_query:
+            try:
+                stock = yf.Ticker(company_query.strip().upper())
+                hist = stock.history(period=p_info["period"], interval=p_info["interval"])
+                if not hist.empty:
+                    resolved_ticker = company_query.strip().upper()
+            except Exception:
+                pass
+
+        # Attempt 3: Twelve Data Time Series API with proper Exchange parameter
+        if hist.empty and TWELVE_DATA_KEY:
+            try:
+                clean_sym = resolved_ticker
+                exch_param = ""
+                if '.NS' in resolved_ticker:
+                    clean_sym = resolved_ticker.replace('.NS', '')
+                    exch_param = "&exchange=NSE"
+                elif '.BO' in resolved_ticker:
+                    clean_sym = resolved_ticker.replace('.BO', '')
+                    exch_param = "&exchange=BSE"
+
+                td_url = f"https://api.twelvedata.com/time_series?symbol={clean_sym}{exch_param}&interval=1day&outputsize=30&apikey={TWELVE_DATA_KEY}"
+                raw = requests.get(td_url, timeout=5).json()
+                if raw.get('status') != 'error' and 'values' in raw:
+                    chart_data = []
+                    for item in reversed(raw['values']):
+                        chart_data.append({
+                            "date": item['datetime'][:10],
+                            "price": round(float(item.get('close', 0)), 2)
+                        })
+                    if chart_data:
+                        return {
+                            "data": chart_data,
+                            "currency": stock_currency,
+                            "ticker": resolved_ticker,
+                            "name": company_name
+                        }
+            except Exception as e:
+                print(f"TwelveData history fallback error: {e}")
+
+        # Attempt 4: Synthetic market curve if history is still empty (never fail/never display red error)
+        if hist.empty:
+            print(f"Generating synthetic public market trend for query: {company_query}")
+            real_price = get_current_stock_price(resolved_ticker)
+            chart_data = generate_synthetic_chart(company_query, resolved_ticker, period, base_price=real_price)
+            return {
+                "data": chart_data,
+                "currency": stock_currency,
+                "ticker": resolved_ticker,
+                "name": company_name
+            }
+
+        max_points = 50 if period in ["1D", "1W"] else 30
+        if len(hist) > max_points:
+            step = len(hist) // max_points
+            hist = hist.iloc[::step]
 
         chart_data = []
-
-        # 1. Fetch from Twelve Data (Primary Source)
-        if TWELVE_DATA_KEY:
+        for date, row in hist.iterrows():
             try:
-                url = (f"https://api.twelvedata.com/time_series"
-                       f"?symbol={urllib.parse.quote(symbol)}"
-                       f"&interval={p_info['interval']}"
-                       f"&outputsize={p_info['outputsize']}"
-                       f"&apikey={TWELVE_DATA_KEY}")
-                if exchange:
-                    url += f"&exchange={exchange}"
-                
-                resp = requests.get(url, timeout=10).json()
-                if resp.get('status') != 'error' and 'values' in resp:
-                    for item in reversed(resp['values']):
-                        price = round(float(item.get('close', item.get('price', 0))), 2)
-                        date_raw = item.get('datetime', '')
-                        try:
-                            if len(date_raw) > 10:
-                                dt = datetime.strptime(date_raw, "%Y-%m-%d %H:%M:%S")
-                            else:
-                                dt = datetime.strptime(date_raw, "%Y-%m-%d")
-                            date_str = dt.strftime(p_info["format"])
-                        except:
-                            date_str = date_raw
-                        chart_data.append({"date": date_str, "price": price})
-            except Exception as td_err:
-                print(f"Twelve Data historical fetch error: {td_err}")
-
-        # 2. Fetch from Alpha Vantage (Fallback Source)
-        if not chart_data and ALPHA_VANTAGE_KEY:
-            try:
-                av_func = "TIME_SERIES_DAILY"
-                if period in ["1D", "1W"]:
-                    av_func = "TIME_SERIES_INTRADAY"
-                url = f"https://www.alphavantage.co/query?function={av_func}&symbol={resolved_ticker}&apikey={ALPHA_VANTAGE_KEY}"
-                if av_func == "TIME_SERIES_INTRADAY":
-                    url += "&interval=5min"
-                
-                resp = requests.get(url, timeout=10).json()
-                ts_key = next((k for k in resp.keys() if "Time Series" in k), None)
-                if ts_key:
-                    raw_data = resp[ts_key]
-                    sorted_dates = sorted(raw_data.keys())[-int(p_info['outputsize']):]
-                    for date_raw in sorted_dates:
-                        price = round(float(raw_data[date_raw]['4. close']), 2)
-                        try:
-                            if len(date_raw) > 10:
-                                dt = datetime.strptime(date_raw, "%Y-%m-%d %H:%M:%S")
-                            else:
-                                dt = datetime.strptime(date_raw, "%Y-%m-%d")
-                            date_str = dt.strftime(p_info["format"])
-                        except:
-                            date_str = date_raw
-                        chart_data.append({"date": date_str, "price": price})
-            except Exception as av_err:
-                print(f"Alpha Vantage fallback history fetch error: {av_err}")
-
-        # 3. Fallback: Synthetic market trend
-        if not chart_data:
-            print(f"Generating synthetic public market trend for query: {company_query}")
-            chart_data = generate_synthetic_chart(company_query, resolved_ticker, period)
+                date_str = date.strftime(p_info["format"])
+            except:
+                date_str = str(date)
+            chart_data.append({"date": date_str, "price": round(row['Close'], 2)})
 
         return {
             "data": chart_data,
@@ -1275,57 +1340,33 @@ def get_live_quote():
 
     resolved_ticker, company_name, stock_currency = resolve_company_ticker(ticker)
 
-    # 1. Primary: Twelve Data Quote
-    if TWELVE_DATA_KEY:
-        try:
-            symbol = resolved_ticker
-            exchange = None
-            if resolved_ticker.endswith('.NS'):
-                symbol = resolved_ticker[:-3]
-                exchange = 'NSE'
-            elif resolved_ticker.endswith('.BO'):
-                symbol = resolved_ticker[:-3]
-                exchange = 'BSE'
-                
-            url = f"https://api.twelvedata.com/quote?symbol={urllib.parse.quote(symbol)}&apikey={TWELVE_DATA_KEY}"
-            if exchange:
-                url += f"&exchange={exchange}"
-            resp = requests.get(url, timeout=5).json()
-            if resp.get('status') != 'error' and 'close' in resp:
-                price = float(resp.get('close', 0))
-                return jsonify({
-                    "price": price,
-                    "ticker": resolved_ticker,
-                    "name": company_name,
-                    "currency": stock_currency,
-                    "open": resp.get('open', 'N/A'),
-                    "high": resp.get('high', 'N/A'),
-                    "low": resp.get('low', 'N/A'),
-                    "change": resp.get('change', 'N/A'),
-                    "pct_change": resp.get('percent_change', 'N/A'),
-                    "source": "Twelve Data"
-                })
-        except Exception as td_err:
-            print(f"Twelve Data live quote error: {td_err}")
-
-    # 2. Secondary: Alpha Vantage Quote
     quote = get_alpha_vantage(resolved_ticker)
-    if quote and quote.get('price') != 'N/A':
-        quote["ticker"] = resolved_ticker
-        quote["name"] = company_name
-        quote["currency"] = stock_currency
-        quote["source"] = "Alpha Vantage"
-        return jsonify(quote)
+    if not quote or quote.get('price') == 'N/A':
+        try:
+            stock = yf.Ticker(resolved_ticker)
+            info = stock.info
+            price = info.get('currentPrice', info.get('regularMarketPrice', 'N/A'))
+            return jsonify({
+                "price": price, 
+                "ticker": resolved_ticker, 
+                "name": company_name, 
+                "currency": stock_currency, 
+                "source": "yfinance"
+            })
+        except Exception:
+            return jsonify({
+                "price": 450.0, 
+                "ticker": resolved_ticker, 
+                "name": company_name, 
+                "currency": stock_currency, 
+                "source": "synthetic"
+            })
 
-    # 3. Tertiary: Fallback / Synthetic Quote
-    base_price = 420.0 if stock_currency == 'INR' else 185.0
-    return jsonify({
-        "price": base_price,
-        "ticker": resolved_ticker,
-        "name": company_name,
-        "currency": stock_currency,
-        "source": "synthetic"
-    })
+    quote["ticker"] = resolved_ticker
+    quote["name"] = company_name
+    quote["currency"] = stock_currency
+    quote["source"] = "Alpha Vantage"
+    return jsonify(quote)
 
 @app.route('/chart-data', methods=['GET'])
 def fetch_chart_data():
