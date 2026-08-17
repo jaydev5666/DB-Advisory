@@ -78,8 +78,8 @@ const MarketChartWidget = () => {
     const chartColor = isUp ? '#16c784' : '#ea3943';
 
     return (
-        <section style={{ padding:'80px 60px', background:'var(--surface-dim)', borderTop:'1px solid var(--border)' }}>
-            <div style={{ maxWidth:'1100px', margin:'0 auto' }}>
+        <section style={{ padding:'40px 0', background:'transparent', borderTop:'none', width: '100%' }}>
+            <div style={{ width:'100%', margin:'0 auto' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'32px', flexWrap:'wrap', gap:'16px' }}>
                     <div>
                         <div style={{ fontSize:'12px', fontWeight: 700, letterSpacing:'0.1em', color:'var(--primary)', marginBottom:'8px' }}>LIVE MARKET CHART</div>
@@ -157,11 +157,11 @@ const MarketChartWidget = () => {
                 </div>
 
                 {/* Chart card */}
-                <div className="glass" style={{ borderRadius:'16px', padding:'28px', boxShadow:'0 4px 24px rgba(0,0,0,0.06)' }}>
-                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'20px' }}>
+                <div className="glass chart-card-container" style={{ borderRadius:'16px', boxShadow:'0 4px 24px rgba(0,0,0,0.06)' }}>
+                    <div className="chart-card-header" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'20px' }}>
                         <div>
                             <div style={{ fontSize:'13px', color:'var(--text-muted)', fontWeight:500, textTransform:'uppercase', letterSpacing:'0.05em' }}>{ticker}</div>
-                            <div style={{ display:'flex', alignItems:'baseline', gap:'12px', marginTop:'4px' }}>
+                            <div className="chart-price-container">
                                 {loading ? (
                                     <span style={{ fontSize:'28px', fontWeight:700, color:'var(--text-muted)' }}>Loading...</span>
                                 ) : (
@@ -175,7 +175,7 @@ const MarketChartWidget = () => {
                             </div>
                             {error && <div style={{ color:'#ef4444', fontSize:'12px', marginTop:'4px' }}>{error}</div>}
                         </div>
-                        <div style={{ display:'flex', gap:'4px', background:'rgba(0,0,0,0.04)', borderRadius:'8px', padding:'4px' }}>
+                        <div style={{ display:'flex', gap:'4px', background:'rgba(0,0,0,0.04)', borderRadius:'8px', padding:'4px', height: 'fit-content' }}>
                             {['1D','1W','3M','6M','1Y','5Y'].map(p => (
                                 <div key={p} onClick={() => { setPeriod(p); fetchChart(ticker, p); }} style={{ padding:'4px 10px', borderRadius:'6px', fontSize:'12px', fontWeight: p===period?700:500, color: p===period?'#fff':'var(--text-muted)', background: p===period ? chartColor : 'transparent', cursor:'pointer', transition:'all 0.15s' }}>
                                     {p}
@@ -183,8 +183,8 @@ const MarketChartWidget = () => {
                             ))}
                         </div>
                     </div>
-
-                    <div style={{ height:'280px', width:'100%', opacity: loading ? 0.4 : 1, transition:'opacity 0.3s' }}>
+ 
+                    <div className="chart-container-wrapper" style={{ opacity: loading ? 0.4 : 1, transition:'opacity 0.3s' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={converted} margin={{ top:4, right:0, left:0, bottom:0 }}>
                                 <defs>
@@ -209,10 +209,10 @@ const MarketChartWidget = () => {
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
-
+ 
                     {/* Stats footer */}
                     {!loading && converted.length > 0 && (
-                        <div style={{ display:'flex', gap:'32px', marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(0,0,0,0.06)', flexWrap:'wrap' }}>
+                        <div className="chart-stats-footer" style={{ display:'flex', gap:'32px', marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(0,0,0,0.06)', flexWrap:'wrap' }}>
                             {[
                                 { label:'Open',   value:`${sym}${Number(first).toLocaleString(undefined,{minimumFractionDigits:2})}` },
                                 { label:'Close',  value:`${sym}${Number(last).toLocaleString(undefined,{minimumFractionDigits:2})}` },
@@ -470,8 +470,9 @@ const LandingPage = () => {
                 </div>
             </header>
 
-            <section className="hero-section" style={{ textAlign: 'center', padding: '100px 20px 80px 20px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '960px', margin: '0 auto' }}>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+                <section className="hero-section" style={{ textAlign: 'center', padding: '60px 20px 40px 20px', width: '100%' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', margin: '0 auto' }}>
                     <div className="tag hero-animate anim-delay-100" style={{ background: 'var(--surface-dim)', color: 'var(--text-muted)', fontWeight: '500', borderRadius: '100px', padding: '6px 16px', letterSpacing: '0.5px', display: 'inline-flex', alignItems: 'center', marginBottom: '32px' }}>
                         <span style={{ color: 'var(--primary)', fontWeight: '700', marginRight: '8px' }}>●</span> DB RESEARCH PLATFORM V3.4.2
                     </div>
@@ -482,7 +483,7 @@ const LandingPage = () => {
                         Accelerate deal flow with autonomous research workflows. Synthesize vast datasets, 
                         uncover peer group anomalies, and execute with mathematical precision.
                     </p>
-                    <div className="hero-buttons hero-animate anim-delay-400" style={{ display: 'flex', gap: '20px', justifyContent: 'center', alignItems: 'center', marginBottom: '16px' }}>
+                    <div className="hero-buttons hero-animate anim-delay-400">
                         <SpecularButton
                             size="lg"
                             radius={4}
@@ -509,11 +510,11 @@ const LandingPage = () => {
                         >
                             Wealth Portal <Wallet size={18} style={{ marginLeft: '8px', verticalAlign: 'middle' }} />
                         </SpecularButton>
-                        <button className="btn btn-secondary" onClick={() => navigate('/services')} style={{ padding: '16px 32px' }}>
+                        <button className="btn btn-secondary" onClick={() => navigate('/services')} style={{ minHeight: '48px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                             Explore Platform
                         </button>
                     </div>
-                    <div className="hero-stats hero-animate anim-delay-500" style={{ marginTop: '64px', display: 'flex', gap: '80px', justifyContent: 'center', width: '100%' }}>
+                    <div className="hero-stats hero-animate anim-delay-500">
                         <div className="stat" style={{ textAlign: 'center' }}><h3 style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>4+</h3><p style={{ margin: 0, fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '1px' }}>DEAL TYPES</p></div>
                         <div className="stat" style={{ textAlign: 'center' }}><h3 style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Live</h3><p style={{ margin: 0, fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '1px' }}>PEER MULTIPLES</p></div>
                         <div className="stat" style={{ textAlign: 'center' }}><h3 style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Top 20</h3><p style={{ margin: 0, fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '1px' }}>BANK COVERAGE</p></div>
@@ -524,8 +525,8 @@ const LandingPage = () => {
             <MarketChartWidget />
 
             {/* Top Movers + Upcoming IPOs */}
-            <section style={{ padding: '60px', background: '#fff', borderTop: '1px solid var(--border)' }}>
-                <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+            <section style={{ padding: '40px 0', background: 'transparent', borderTop: 'none', width: '100%' }}>
+                <div style={{ width: '100%', margin: '0 auto' }}>
                     <div style={{ marginBottom: '28px' }}>
                         <div style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.1em', color: 'var(--primary)', marginBottom: '6px' }}>REAL-TIME DATA</div>
                         <h2 style={{ fontSize: '28px', fontWeight: 800, margin: 0 }}>Market Pulse</h2>
@@ -540,8 +541,8 @@ const LandingPage = () => {
 
             {/* Live Market Intelligence Section */}
             {liveNews && liveNews.headlines && liveNews.headlines.length > 0 && (
-                <section style={{ padding: '80px 0', background: '#fff', borderTop: '1px solid var(--border)' }}>
-                    <div className="responsive-container">
+                <section style={{ padding: '40px 0', background: 'transparent', borderTop: 'none', width: '100%' }}>
+                    <div className="w-full">
                         <div className="card glass full-width" style={{ borderLeft: '4px solid #3b82f6', background: '#f8fafc', boxShadow: 'none' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                                 <h4 style={{ fontSize: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={22} /> Market Intelligence: Recent News</h4>
@@ -568,8 +569,8 @@ const LandingPage = () => {
                 </section>
             )}
 
-            <section className="features-section" style={{ background: '#f8fafc', borderTop: '1px solid var(--border)', padding: '120px 0' }}>
-                <div className="responsive-container">
+            <section className="features-section" style={{ background: 'transparent', borderTop: 'none', padding: '60px 0', width: '100%' }}>
+                <div className="w-full">
                     <div style={{ marginBottom: '80px' }}>
                         <h2 style={{ fontSize: '48px', marginBottom: '16px' }}>Autonomous Research Workflows</h2>
                         <p style={{ fontSize: '20px', color: 'var(--text-muted)', maxWidth: '850px' }}>
@@ -587,7 +588,7 @@ const LandingPage = () => {
                             <p style={{ color: 'var(--text-muted)', marginBottom: '40px', fontSize: '16px', lineHeight: '1.6' }}>
                                 Instantly benchmark target companies against multi-dimensional peer sets. The engine automatically ingests SEC filings, earnings transcripts, and equity research.
                             </p>
-                            <div style={{ border: '1px solid var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div className="table-container" style={{ border: '1px solid var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
                                 <table style={{ fontSize: '13px', width: '100%', borderCollapse: 'collapse' }}>
                                     <thead style={{ background: 'var(--surface-dim)', textAlign: 'left' }}>
                                         <tr>
@@ -666,13 +667,16 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            <section className="cta-section">
-                <PixelCard className="cta-box" style={{ background: '#fff', border: '1px solid var(--border)', display: 'block', textAlign: 'center' }}>
-                    <h2>Ready to accelerate your deal workflow?</h2>
-                    <p>Sign up free and run your first deal analysis in under a minute.</p>
-                    <button className="btn btn-primary" style={{ padding: "10px 50px", marginTop: "20px" }} onClick={() => navigate('/dashboard')}>Get started <ArrowRight size={18} /></button>
-                </PixelCard>
+            <section className="cta-section" style={{ width: '100%', padding: '60px 40px' }}>
+                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                    <PixelCard className="cta-box" style={{ background: '#fff', border: '1px solid var(--border)', display: 'block', textAlign: 'center', padding: '60px' }}>
+                        <h2>Ready to accelerate your deal workflow?</h2>
+                        <p>Sign up free and run your first deal analysis in under a minute.</p>
+                        <button className="btn btn-primary" style={{ padding: "10px 50px", marginTop: "20px" }} onClick={() => navigate('/dashboard')}>Get started <ArrowRight size={18} /></button>
+                    </PixelCard>
+                </div>
             </section>
+            </main>
 
             <footer style={{ padding: '40px 60px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
                 <div style={{ fontSize: '18px', fontWeight: '800' }}>DB ADVISORY</div>

@@ -19,6 +19,48 @@
   font-family: 'Inter', sans-serif;
 }
 
+/* Tailwind Utility Polyfills for Global Width Correction */
+.w-full {
+  width: 100% !important;
+}
+
+.max-w-7xl {
+  max-width: 1280px !important;
+}
+
+.mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.px-4 {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+@media (min-width: 640px) {
+  .sm\:px-6 {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:px-8 {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+}
+
+.py-10 {
+  padding-top: 40px !important;
+  padding-bottom: 40px !important;
+}
+
+.space-y-12 > * + * {
+  margin-top: 48px !important;
+}
+
 html,
 body,
 #root {
@@ -74,6 +116,7 @@ p {
   gap: 10px;
   transition: all 0.3s ease;
   font-size: 15px;
+  min-height: 44px;
 }
 
 .btn-primary {
@@ -377,6 +420,13 @@ textarea {
 }
 
 /* --- Responsive Utility Styles --- */
+.table-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .responsive-container {
   max-width: 1400px;
   margin: 0 auto 100px auto;
@@ -549,6 +599,48 @@ td {
   color: var(--primary);
 }
 
+/* Hero Action and Chart components classes */
+.hero-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.hero-buttons .specular-button,
+.hero-buttons button {
+  min-height: 48px;
+}
+
+.hero-stats {
+  margin-top: 64px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 80px;
+  width: 100%;
+}
+
+.chart-card-container {
+  padding: 28px;
+}
+
+.chart-price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.chart-container-wrapper {
+  height: 380px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
 /* --- Mobile Responsiveness --- */
 
 @media (max-width: 1200px) {
@@ -597,11 +689,41 @@ td {
     margin: 0 auto 32px !important;
   }
   .hero-buttons {
-    justify-content: center;
+    flex-direction: column !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+    max-width: 420px;
+    margin: 0 auto 16px auto;
+  }
+  .hero-buttons .specular-button,
+  .hero-buttons button {
+    width: 100% !important;
   }
   .hero-stats {
-    justify-content: center;
-    gap: 40px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px !important;
+    margin-top: 40px !important;
+  }
+  .chart-card-container {
+    padding: 16px !important;
+  }
+  .chart-card-header {
+    flex-direction: column !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+  }
+  .chart-price-container {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+  .chart-stats-footer {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+  }
+  .card {
+    padding: 16px !important;
   }
   .landing-nav {
     display: none; /* Hide nav links on mobile for simplicity, or we'd need a menu */
@@ -663,8 +785,12 @@ td {
   .hero-title {
     font-size: 32px !important;
   }
-  .hero-buttons {
-    flex-direction: column;
+  .hero-stats {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .chart-stats-footer {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
   .btn {
     width: 100%;
