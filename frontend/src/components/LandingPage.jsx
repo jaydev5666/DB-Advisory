@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { BarChart4, ArrowRight, Zap, BarChart, TrendingUp, TrendingDown, Building2, FileSpreadsheet, Shield, Cpu, MoveRight, History, Search, Calendar, Activity, Wallet } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol } from '../services/api';
+import SpotlightCard from './SpotlightCard';
+import GooeyNav from './GooeyNav';
+import PixelCard from './PixelCard';
+import SpecularButton from './SpecularButton';
 
 const MarketChartWidget = () => {
     const [ticker, setTicker]           = useState('AAPL');
@@ -443,24 +447,25 @@ const LandingPage = () => {
         navigate('/');
     };
 
+    const navItems = [
+        { label: "Home", href: "#", onClick: () => navigate('/') },
+        { label: "Services", href: "#", onClick: () => navigate('/services') },
+        { label: "Screener", href: "#", onClick: () => navigate('/screener') },
+        { label: "Wealth Portal", href: "#", onClick: () => navigate('/wealth-portal') },
+        { label: "About", href: "#", onClick: () => navigate('/about') },
+        { label: "Contact", href: "#", onClick: () => navigate('/contact') }
+    ];
+
     return (
         <div id="landing-screen" className="screen">
             <header className="landing-header">
                 <div className="logo" style={{ cursor: 'pointer', gap: '8px' }} onClick={() => navigate('/')}>
                     <h2 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>DB ADVISORY</h2>
                 </div>
-                <nav className="landing-nav">
-                    <a className="active" onClick={() => navigate('/')}>Home</a>
-                    <a onClick={() => navigate('/services')}>Services</a>
-                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
-                    <a onClick={() => navigate('/about')}>About</a>
-                    <a onClick={() => navigate('/contact')}>Contact</a>
-                </nav>
+                <GooeyNav items={navItems} initialActiveIndex={0} />
                 <div className="header-actions">
-                    {user && user.username !== 'guest' ? (
+                    {user && user.username !== 'guest' && (
                         <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={handleSignOut}>Sign out</button>
-                    ) : (
-                        <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>Launch Analyzer</button>
                     )}
                 </div>
             </header>
@@ -477,13 +482,33 @@ const LandingPage = () => {
                         Accelerate deal flow with autonomous research workflows. Synthesize vast datasets, 
                         uncover peer group anomalies, and execute with mathematical precision.
                     </p>
-                    <div className="hero-buttons hero-animate anim-delay-400" style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '16px' }}>
-                        <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px' }}>
-                            Analyze a Deal <ArrowRight size={18} />
-                        </button>
-                        <button className="btn btn-primary" onClick={() => navigate('/wealth-portal')} style={{ padding: '16px 32px', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
+                    <div className="hero-buttons hero-animate anim-delay-400" style={{ display: 'flex', gap: '20px', justifyContent: 'center', alignItems: 'center', marginBottom: '16px' }}>
+                        <SpecularButton
+                            size="lg"
+                            radius={4}
+                            tint="var(--primary)"
+                            tintOpacity={1}
+                            textColor="#ffffff"
+                            lineColor="#3b82f6"
+                            baseColor="#1e293b"
+                            intensity={1.2}
+                            onClick={() => navigate('/dashboard')}
+                        >
+                            Analyze a Deal <ArrowRight size={18} style={{ marginLeft: '8px', verticalAlign: 'middle' }} />
+                        </SpecularButton>
+                        <SpecularButton
+                            size="lg"
+                            radius={4}
+                            tint="var(--accent)"
+                            tintOpacity={1}
+                            textColor="#ffffff"
+                            lineColor="#60a5fa"
+                            baseColor="#0052cc"
+                            intensity={1.2}
+                            onClick={() => navigate('/wealth-portal')}
+                        >
                             Wealth Portal <Wallet size={18} style={{ marginLeft: '8px', verticalAlign: 'middle' }} />
-                        </button>
+                        </SpecularButton>
                         <button className="btn btn-secondary" onClick={() => navigate('/services')} style={{ padding: '16px 32px' }}>
                             Explore Platform
                         </button>
@@ -554,7 +579,7 @@ const LandingPage = () => {
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px' }}>
                         {/* Peer Group Analysis Card */}
-                        <div className="glass" style={{ padding: '48px', background: '#fff', border: '1px solid var(--border)' }}>
+                        <SpotlightCard spotlightColor="rgba(0, 82, 204, 0.08)" style={{ background: '#fff' }}>
                             <div className="icon-box" style={{ background: 'var(--surface-dim)', borderRadius: '4px', width: '40px', height: '40px', color: 'var(--primary)' }}>
                                 <BarChart size={20} />
                             </div>
@@ -585,10 +610,10 @@ const LandingPage = () => {
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
+                        </SpotlightCard>
 
                         {/* AI Synthesis Card */}
-                        <div className="glass" style={{ padding: '48px', background: '#fff', border: '1px solid var(--border)' }}>
+                        <SpotlightCard spotlightColor="rgba(0, 82, 204, 0.08)" style={{ background: '#fff' }}>
                             <div className="icon-box" style={{ background: 'var(--surface-dim)', borderRadius: '4px', width: '40px', height: '40px', color: 'var(--primary)' }}>
                                 <Cpu size={20} />
                             </div>
@@ -601,10 +626,10 @@ const LandingPage = () => {
                                 <div style={{ height: '8px', width: '100%', background: '#e2e8f0', marginBottom: '16px', borderRadius: '4px' }}></div>
                                 <div style={{ height: '8px', width: '60%', background: '#e2e8f0', borderRadius: '4px' }}></div>
                             </div>
-                        </div>
+                        </SpotlightCard>
 
                         {/* Deal Archive Card */}
-                        <div className="glass" style={{ padding: '48px', background: '#fff', border: '1px solid var(--border)' }}>
+                        <SpotlightCard spotlightColor="rgba(0, 82, 204, 0.08)" style={{ background: '#fff' }}>
                             <div className="icon-box" style={{ background: 'var(--surface-dim)', borderRadius: '4px', width: '40px', height: '40px', color: 'var(--primary)' }}>
                                 <History size={20} />
                             </div>
@@ -613,10 +638,10 @@ const LandingPage = () => {
                                 Query a proprietary decade-long repository of private market transactions to find precedent deals with exact structural similarities.
                             </p>
                             <button className="btn btn-secondary full-width" style={{ padding: '14px' }}>Search Archive</button>
-                        </div>
+                        </SpotlightCard>
 
                         {/* Market Intel Card */}
-                        <div className="glass" style={{ padding: '48px', background: '#fff', border: '1px solid var(--border)' }}>
+                        <SpotlightCard spotlightColor="rgba(0, 82, 204, 0.08)" style={{ background: '#fff' }}>
                             <div className="icon-box" style={{ background: 'var(--surface-dim)', borderRadius: '4px', width: '40px', height: '40px', color: 'var(--primary)' }}>
                                 <TrendingUp size={20} />
                             </div>
@@ -636,17 +661,17 @@ const LandingPage = () => {
                                     <span style={{ color: 'var(--text-muted)' }}>Sector Shift: Healthcare Tech</span>
                                 </div>
                             </div>
-                        </div>
+                        </SpotlightCard>
                     </div>
                 </div>
             </section>
 
             <section className="cta-section">
-                <div className="cta-box glass">
+                <PixelCard className="cta-box" style={{ background: '#fff', border: '1px solid var(--border)', display: 'block', textAlign: 'center' }}>
                     <h2>Ready to accelerate your deal workflow?</h2>
                     <p>Sign up free and run your first deal analysis in under a minute.</p>
                     <button className="btn btn-primary" style={{ padding: "10px 50px", marginTop: "20px" }} onClick={() => navigate('/dashboard')}>Get started <ArrowRight size={18} /></button>
-                </div>
+                </PixelCard>
             </section>
 
             <footer style={{ padding: '40px 60px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>

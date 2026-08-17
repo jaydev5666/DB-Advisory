@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart4, Briefcase, PieChart, BarChart3, Landmark, ArrowRight, History, Users, FileText, Wallet } from 'lucide-react';
+import GooeyNav from './GooeyNav';
 
 const Services = () => {
     const navigate = useNavigate();
@@ -54,24 +55,25 @@ const Services = () => {
         }
     ];
 
+    const navItems = [
+        { label: "Home", href: "#", onClick: () => navigate('/') },
+        { label: "Services", href: "#", onClick: () => navigate('/services') },
+        { label: "Screener", href: "#", onClick: () => navigate('/screener') },
+        { label: "Wealth Portal", href: "#", onClick: () => navigate('/wealth-portal') },
+        { label: "About", href: "#", onClick: () => navigate('/about') },
+        { label: "Contact", href: "#", onClick: () => navigate('/contact') }
+    ];
+
     return (
         <div id="landing-screen">
             <header className="landing-header">
                 <div className="logo" style={{ cursor: 'pointer', gap: '8px' }} onClick={() => navigate('/')}>
                     <h2 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>DB ADVISORY</h2>
                 </div>
-                <nav className="landing-nav">
-                    <a onClick={() => navigate('/')}>Home</a>
-                    <a className="active">Services</a>
-                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
-                    <a onClick={() => navigate('/about')}>About</a>
-                    <a onClick={() => navigate('/contact')}>Contact</a>
-                </nav>
+                <GooeyNav items={navItems} initialActiveIndex={1} />
                 <div className="header-actions">
-                    {user && user.username !== 'guest' ? (
+                    {user && user.username !== 'guest' && (
                         <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={handleSignOut}>Sign out</button>
-                    ) : (
-                        <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>Launch Analyzer</button>
                     )}
                 </div>
             </header>

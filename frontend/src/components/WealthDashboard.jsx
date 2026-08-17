@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol } from '../services/api';
+import GooeyNav from './GooeyNav';
 import {
     AreaChart, Area,
     LineChart, Line,
@@ -1427,24 +1428,25 @@ const WealthDashboard = () => {
         );
     }
 
+    const navItems = [
+        { label: "Home", href: "#", onClick: () => navigate('/') },
+        { label: "Services", href: "#", onClick: () => navigate('/services') },
+        { label: "Screener", href: "#", onClick: () => navigate('/screener') },
+        { label: "Wealth Portal", href: "#", onClick: () => navigate('/wealth-portal') },
+        { label: "About", href: "#", onClick: () => navigate('/about') },
+        { label: "Contact", href: "#", onClick: () => navigate('/contact') }
+    ];
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%' }}>
             <header className="landing-header">
                 <div className="logo" style={{ cursor: 'pointer', gap: '8px' }} onClick={() => navigate('/')}>
                     <h2 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>DB ADVISORY</h2>
                 </div>
-                <nav className="landing-nav">
-                    <a onClick={() => navigate('/')}>Home</a>
-                    <a onClick={() => navigate('/services')}>Services</a>
-                    <a className="active" onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
-                    <a onClick={() => navigate('/about')}>About</a>
-                    <a onClick={() => navigate('/contact')}>Contact</a>
-                </nav>
+                <GooeyNav items={navItems} initialActiveIndex={3} />
                 <div className="header-actions">
-                    {user.username !== 'guest' ? (
+                    {user.username !== 'guest' && (
                         <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={handleSignOut}>Sign out</button>
-                    ) : (
-                        <button className="btn btn-secondary" onClick={() => navigate('/')}>Home</button>
                     )}
                 </div>
             </header>

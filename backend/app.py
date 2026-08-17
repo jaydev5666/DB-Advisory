@@ -2097,6 +2097,21 @@ def get_competitor_acquisitions():
     })
 
 
+from screener import run_screener_logic
+
+@app.route('/api/screener', methods=['POST'])
+def run_screener():
+    data = request.json or {}
+    tickers = data.get("tickers", ["RELIANCE.NS","TCS.NS","HDFCBANK.NS","ICICIBANK.NS","SBIN.NS","HFCL.NS","AKUMS.NS"])
+    force_refresh = data.get("force_refresh", False)
+    
+    results = run_screener_logic(tickers, force_refresh=force_refresh)
+    return jsonify({
+        "status": "success",
+        "results": results
+    })
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5005))
     print(f"Backend starting on port {port}...")

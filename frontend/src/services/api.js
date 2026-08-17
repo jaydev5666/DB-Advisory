@@ -148,4 +148,5 @@ export const api = {
     getWealthAdvisory: (riskProfile, assets, goals) => client.post(`/api/user/wealth/advisory`, { risk_profile: riskProfile, assets, goals }),
     getCompetitors: () => client.get(`/api/competitors`),
     getAcquisitions: () => client.get(`/api/competitors/acquisitions`),
+    runScreener: (tickers) => client.post(`/api/screener`, { tickers }),
 };
