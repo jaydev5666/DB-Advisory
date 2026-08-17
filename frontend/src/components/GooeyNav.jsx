@@ -151,22 +151,79 @@ const GooeyNav = ({
     return () => resizeObserver.disconnect();
   }, [activeIndex]);
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   return (
-    <div className="gooey-nav-container" ref={containerRef}>
-      <nav>
-        <ul ref={navRef}>
-          {items.map((item, index) => (
-            <li key={index} className={activeIndex === index ? 'active' : ''} onClick={e => handleClick(e, index)}>
-              <a href={item.href} onClick={e => e.preventDefault()} onKeyDown={e => handleKeyDown(e, index)}>
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <span className="effect filter" ref={filterRef} />
-      <span className="effect text" ref={textRef} />
-    </div>
+    <>
+      {/* Mobile Menu Toggle Button */}
+      <button 
+        className="mobile-menu-toggle" 
+        onClick={() => setIsDrawerOpen(true)}
+        aria-label="Open navigation menu"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      {/* Desktop Gooey Navigation */}
+      <div className="gooey-nav-container" ref={containerRef}>
+        <nav>
+          <ul ref={navRef}>
+            {items.map((item, index) => (
+              <li key={index} className={activeIndex === index ? 'active' : ''} onClick={e => handleClick(e, index)}>
+                <a href={item.href} onClick={e => e.preventDefault()} onKeyDown={e => handleKeyDown(e, index)}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <span className="effect filter" ref={filterRef} />
+        <span className="effect text" ref={textRef} />
+      </div>
+
+      {/* Responsive Drawer Overlay */}
+      {isDrawerOpen && (
+        <div className="mobile-drawer-overlay">
+          <div className="mobile-drawer-backdrop" onClick={() => setIsDrawerOpen(false)} />
+          <aside className="mobile-drawer-content">
+            <div className="mobile-drawer-header">
+              <span className="mobile-drawer-title">DB ADVISORY</span>
+              <button className="mobile-drawer-close" onClick={() => setIsDrawerOpen(false)} aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <nav className="mobile-drawer-nav">
+              {items.map((item, index) => (
+                <a
+                  key={index}
+                  href={item.href}
+                  className={`mobile-drawer-link ${activeIndex === index ? 'active' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsDrawerOpen(false);
+                    if (item.onClick) {
+                      item.onClick(e);
+                    }
+                  }}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            <div className="mobile-drawer-footer">
+              <span>© 2024 DB Advisory</span>
+            </div>
+          </aside>
+        </div>
+      )}
+    </>
   );
 };
 

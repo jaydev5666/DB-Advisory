@@ -22,3 +22,15 @@ backend/pitchbook.pptx
 # OS files
 .DS_Store
 Thumbs.db
+
+# MCP Configuration and temporary client scripts
+.agents/
+backend/mcp_client.py
+backend/mcp_direct.py
+backend/test_get.py
+backend/fetch_screens.py
+backend/download_screen_html.py
+backend/screen1.json
+backend/screen2.json
+backend/screen_mobile.html
+backend/screen_tablet.html

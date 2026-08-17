@@ -16,10 +16,18 @@ import certifi
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app) # Allow cross-origin requests from frontend
+
+# Configure CORS origins safely
+cors_origins = os.getenv("CORS_ALLOWED_ORIGINS", "*")
+if cors_origins != "*":
+    cors_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+CORS(app, origins=cors_origins)
 
 API_KEY = os.getenv("API_KEY")
-JWT_SECRET = os.getenv("JWT_SECRET", "super-secret-key-change-this")
+JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET:
+    print("WARNING: JWT_SECRET environment variable is missing. Falling back to default insecure key for local testing. Define JWT_SECRET in production!")
+    JWT_SECRET = "super-secret-key-change-this"
 ALPHA_VANTAGE_KEY = os.getenv("ALPHA_VANTAGE_KEY")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 TWELVE_DATA_KEY = os.getenv("TWELVE_DATA_KEY", "")
@@ -35,8 +43,9 @@ limiter = Limiter(
 
 # MongoDB Configuration
 MONGO_URI = os.getenv("MONGO_URI")
-# Troubleshooting: Temporarily allow invalid certificates to check if it's a SSL or IP issue
-client = MongoClient(MONGO_URI, tlsCAFile=certifi.where(), tlsAllowInvalidCertificates=True)
+# Secure certificate handling, configurable verification
+mongo_allow_invalid_certs = os.getenv("MONGO_TLS_ALLOW_INVALID", "false").lower() == "true"
+client = MongoClient(MONGO_URI, tlsCAFile=certifi.where(), tlsAllowInvalidCertificates=mongo_allow_invalid_certs)
 db = client["db_advisory"]
 users_col = db["users"]
 history_col = db["history"]
@@ -372,8 +381,11 @@ def auto_seed_competitors():
 
 def init_db():
     # Add default admin user if not exists and ensure admin role from .env
-    admin_email = os.getenv("ADMIN_EMAIL", "admin")
-    admin_password = os.getenv("ADMIN_PASSWORD", "1234")
+    admin_email = os.getenv("ADMIN_EMAIL", "admin@dbadvisory.local")
+    admin_password = os.getenv("ADMIN_PASSWORD")
+    if not admin_password:
+        print("WARNING: ADMIN_PASSWORD environment variable is missing. Falling back to default '1234'. Set a strong ADMIN_PASSWORD in production immediately!")
+        admin_password = "1234"
     
     # Try to find a user with role "admin"
     admin_user = users_col.find_one({"role": "admin"})
@@ -2110,6 +2122,22 @@ def run_screener():
         "status": "success",
         "results": results
     })
+
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    try:
+        # Ping MongoDB database
+        client.admin.command('ping')
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"unreachable: {str(e)}"
+        
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "database": db_status
+    }), 200
 
 
 if __name__ == "__main__":
