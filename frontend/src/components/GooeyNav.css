@@ -368,5 +368,10 @@
   }
   .mobile-menu-toggle {
     display: flex;
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
   }
 }

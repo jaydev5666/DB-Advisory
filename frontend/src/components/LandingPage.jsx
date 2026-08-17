@@ -531,7 +531,7 @@ const LandingPage = () => {
                         <h2 style={{ fontSize: '28px', fontWeight: 800, margin: 0 }}>Market Pulse</h2>
                         <p style={{ color: 'var(--text-muted)', marginTop: '6px', fontSize: '15px' }}>Live NSE movers and global IPO pipeline — updated every session.</p>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                    <div className="responsive-grid-2" style={{ gap: '24px' }}>
                         <TopMoversPanel />
                         <IpoCalendarPanel />
                     </div>
@@ -541,7 +541,7 @@ const LandingPage = () => {
             {/* Live Market Intelligence Section */}
             {liveNews && liveNews.headlines && liveNews.headlines.length > 0 && (
                 <section style={{ padding: '80px 0', background: '#fff', borderTop: '1px solid var(--border)' }}>
-                    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 60px' }}>
+                    <div className="responsive-container">
                         <div className="card glass full-width" style={{ borderLeft: '4px solid #3b82f6', background: '#f8fafc', boxShadow: 'none' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                                 <h4 style={{ fontSize: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={22} /> Market Intelligence: Recent News</h4>
@@ -569,7 +569,7 @@ const LandingPage = () => {
             )}
 
             <section className="features-section" style={{ background: '#f8fafc', borderTop: '1px solid var(--border)', padding: '120px 0' }}>
-                <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 60px' }}>
+                <div className="responsive-container">
                     <div style={{ marginBottom: '80px' }}>
                         <h2 style={{ fontSize: '48px', marginBottom: '16px' }}>Autonomous Research Workflows</h2>
                         <p style={{ fontSize: '20px', color: 'var(--text-muted)', maxWidth: '850px' }}>
@@ -577,7 +577,7 @@ const LandingPage = () => {
                         </p>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px' }}>
+                    <div className="responsive-grid-2">
                         {/* Peer Group Analysis Card */}
                         <SpotlightCard spotlightColor="rgba(0, 82, 204, 0.08)" style={{ background: '#fff' }}>
                             <div className="icon-box" style={{ background: 'var(--surface-dim)', borderRadius: '4px', width: '40px', height: '40px', color: 'var(--primary)' }}>

@@ -447,7 +447,7 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
                         <div className="card glass" style={{ padding: '24px' }}>
                             <h4>Asset Allocation</h4>
                             {pieData.length > 0 ? (
-                                <div style={{ height: '260px', position: 'relative' }}>
+                                <div style={{ height: '380px', position: 'relative' }}>
                                     <ResponsiveContainer width="100%" height="100%">
                                         <PieChart>
                                             <Pie
@@ -702,7 +702,7 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
                                 </div>
                             </div>
                         </div>
-                        <div style={{ height: '300px' }}>
+                        <div style={{ height: '380px' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={projectionData}>
                                     <defs>
@@ -752,7 +752,7 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
                                 {/* Asset Allocation Recommendation */}
                                 <div className="card glass" style={{ padding: '20px' }}>
                                     <h5 style={{ fontWeight: '700', marginBottom: '12px', fontSize: '15px' }}>Strategic Allocation Target</h5>
-                                    <div style={{ height: '200px' }}>
+                                    <div style={{ height: '260px' }}>
                                         <ResponsiveContainer width="100%" height="100%">
                                             <PieChart>
                                                 <Pie
@@ -1111,7 +1111,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
                             </p>
                             {macroTrends.length > 0 ? (
                                 <div>
-                                    <div style={{ height: '220px' }}>
+                                    <div style={{ height: '280px' }}>
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={macroTrends} layout="vertical">
                                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />

@@ -185,7 +185,7 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
                 </div>
             </div>
 
-            <div style={{ height:'260px', width:'100%' }}>
+            <div style={{ height:'380px', width:'100%' }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={converted} margin={{ top:4, right:0, left:0, bottom:0 }}>
                         <defs>
@@ -488,7 +488,7 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                                     <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'ev' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>EV/EBITDA</button>
                                 </div>
                             </div>
-                            <div style={{ height:'300px' }}>
+                            <div style={{ height:'380px' }}>
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={result.benchmarking_data}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -1001,7 +1001,7 @@ const Dashboard = () => {
                                                         <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'ev' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>EV/EBITDA</button>
                                                     </div>
                                                 </div>
-                                                <div style={{ height: '300px', width: '100%' }}>
+                                                <div style={{ height: '380px', width: '100%' }}>
                                                     <ResponsiveContainer width="100%" height="100%">
                                                         <BarChart data={latestData.benchmarking_data}>
                                                             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />

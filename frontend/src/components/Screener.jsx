@@ -112,8 +112,8 @@ const Screener = () => {
                 </div>
             </section>
 
-            <section style={{ maxWidth: '1400px', margin: '0 auto 100px auto', padding: '0 60px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '40px' }}>
+            <section className="responsive-container">
+                <div className="responsive-grid-1-3">
                     
                     {/* Left Panel: Ticker Configuration */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
