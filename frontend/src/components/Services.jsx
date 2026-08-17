@@ -78,40 +78,42 @@ const Services = () => {
                 </div>
             </header>
 
-            <section className="hero-section" style={{ paddingBottom: '40px' }}>
-                <div className="hero-content">
-                    <div className="tag"><Briefcase size={14} /> PLATFORM</div>
-                    <h1 className="hero-title" style={{ fontSize: '80px' }}>Services built for deal teams.</h1>
-                    <p className="hero-subtitle">A full-stack AI research platform — from initial deal screening through pitch-ready output.</p>
-                </div>
-            </section>
-
-            <section className="features-section" style={{ background: 'transparent', borderTop: 'none' }}>
-                <div className="features-grid">
-                    {services.map((service, i) => (
-                        <div key={i} className="feature-card glass">
-                            <div className="icon-box">{service.icon}</div>
-                            <h3>{service.title}</h3>
-                            <p>{service.description}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            <section className="cta-section">
-                <div className="cta-box glass" style={{ textAlign: 'center' }}>
-                    <h2 style={{ fontSize: '48px', marginBottom: '16px' }}>Try the live platform</h2>
-                    <p style={{ marginBottom: '32px' }}>Run an end-to-end deal analysis or manage client wealth portfolios in seconds.</p>
-                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-                        <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px', fontSize: '16px' }}>
-                            Launch Deal Analyzer
-                        </button>
-                        <button className="btn btn-primary" onClick={() => navigate('/wealth-portal')} style={{ padding: '16px 32px', fontSize: '16px', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
-                            Launch Wealth Portal
-                        </button>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <section className="hero-section" style={{ paddingBottom: '40px' }}>
+                    <div className="hero-content">
+                        <div className="tag"><Briefcase size={14} /> PLATFORM</div>
+                        <h1 className="hero-title" style={{ fontSize: '80px' }}>Services built for deal teams.</h1>
+                        <p className="hero-subtitle">A full-stack AI research platform — from initial deal screening through pitch-ready output.</p>
                     </div>
-                </div>
-            </section>
+                </section>
+
+                <section className="features-section" style={{ background: 'transparent', borderTop: 'none' }}>
+                    <div className="features-grid">
+                        {services.map((service, i) => (
+                            <div key={i} className="feature-card glass">
+                                <div className="icon-box">{service.icon}</div>
+                                <h3>{service.title}</h3>
+                                <p>{service.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="cta-section">
+                    <div className="cta-box glass" style={{ textAlign: 'center' }}>
+                        <h2 style={{ fontSize: '48px', marginBottom: '16px' }}>Try the live platform</h2>
+                        <p style={{ marginBottom: '32px' }}>Run an end-to-end deal analysis or manage client wealth portfolios in seconds.</p>
+                        <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+                            <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px', fontSize: '16px' }}>
+                                Launch Deal Analyzer
+                            </button>
+                            <button className="btn btn-primary" onClick={() => navigate('/wealth-portal')} style={{ padding: '16px 32px', fontSize: '16px', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
+                                Launch Wealth Portal
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
 
             <footer className="landing-footer">
                 <div className="footer-col">

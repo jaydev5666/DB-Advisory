@@ -61,6 +61,16 @@
   margin-top: 48px !important;
 }
 
+/* Page section vertical rhythm */
+.page-section {
+  width: 100%;
+  padding: 64px 0;
+}
+
+.page-section + .page-section {
+  padding-top: 0;
+}
+
 html,
 body,
 #root {
@@ -143,12 +153,14 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 60px;
+  /* Use clamp so the header content aligns with max-w-7xl (1280px) page gutter */
+  padding: 20px clamp(16px, calc((100vw - 1280px) / 2 + 32px), 80px);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   background: #fff;
   z-index: 1000;
+  width: 100%;
 }
 
 .logo {
@@ -185,14 +197,14 @@ p {
 }
 
 .hero-section {
-  padding: 120px 60px;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 80px 0;
+  width: 100%;
 }
 
 .hero-title {
-  font-size: 80px;
+  font-size: clamp(48px, 6vw, 80px);
   margin-bottom: 32px;
+  line-height: 1.08;
 }
 
 .hero-subtitle {
@@ -233,7 +245,7 @@ p {
 }
 
 .features-header {
-  margin-left: 60px;
+  margin-left: 0;
 }
 
 .features-grid {
@@ -241,8 +253,7 @@ p {
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
   margin-top: 60px;
-  margin-right: 60px;
-  margin-left: 60px;
+  width: 100%;
 }
 
 .feature-card {
@@ -272,8 +283,8 @@ p {
 
 .cta-box {
   padding: 80px;
-  margin: 60px auto;
-  max-width: 1280px;
+  margin: 60px 0;
+  width: 100%;
 }
 
 
@@ -282,8 +293,8 @@ p {
   display: flex;
   justify-content: space-between;
   border-top: 1px solid var(--border);
-  max-width: 1400px;
-  margin: 60px auto 0;
+  width: 100%;
+  margin: 60px 0 0;
 }
 
 .footer-col {
@@ -336,8 +347,10 @@ p {
 .db-main {
   flex: 1;
   overflow-y: auto;
-  padding: 40px 60px;
+  padding: 40px 48px;
   background: var(--bg-dark);
+  width: 0; /* flex item width trick — forces flex:1 to not overflow sidebar */
+  min-width: 0;
 }
 
 .nav-item {
@@ -428,9 +441,9 @@ textarea {
 }
 
 .responsive-container {
-  max-width: 1400px;
-  margin: 0 auto 100px auto;
-  padding: 0 60px;
+  width: 100%;
+  margin: 0 0 60px 0;
+  padding: 0;
 }
 
 .responsive-grid-2 {

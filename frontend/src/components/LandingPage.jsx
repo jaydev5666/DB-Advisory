@@ -470,9 +470,9 @@ const LandingPage = () => {
                 </div>
             </header>
 
-            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-                <section className="hero-section" style={{ textAlign: 'center', padding: '60px 20px 40px 20px', width: '100%' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', margin: '0 auto' }}>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <section className="hero-section" style={{ textAlign: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                     <div className="tag hero-animate anim-delay-100" style={{ background: 'var(--surface-dim)', color: 'var(--text-muted)', fontWeight: '500', borderRadius: '100px', padding: '6px 16px', letterSpacing: '0.5px', display: 'inline-flex', alignItems: 'center', marginBottom: '32px' }}>
                         <span style={{ color: 'var(--primary)', fontWeight: '700', marginRight: '8px' }}>●</span> DB RESEARCH PLATFORM V3.4.2
                     </div>

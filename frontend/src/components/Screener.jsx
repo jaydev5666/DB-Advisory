@@ -98,8 +98,8 @@ const Screener = () => {
                 </div>
             </header>
 
-            <section className="hero-section" style={{ paddingBottom: '40px' }}>
-                <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <section className="hero-section" style={{ paddingBottom: '40px' }}>
                     <div className="tag" style={{ background: 'var(--surface-dim)', color: 'var(--text-muted)' }}>
                         <Sparkles size={12} style={{ marginRight: '6px' }} /> TECHNICAL SCANNER
                     </div>
@@ -109,10 +109,9 @@ const Screener = () => {
                     <p className="hero-subtitle" style={{ fontSize: '20px', maxWidth: '850px' }}>
                         Scan multiple equities simultaneously. Calculate moving averages, RSI strength, MACD crossovers, and directional trend velocity with instant quantitative scoring.
                     </p>
-                </div>
-            </section>
+                </section>
 
-            <section className="responsive-container">
+                <section style={{ width: '100%', paddingBottom: '60px' }}>
                 <div className="responsive-grid-1-3">
                     
                     {/* Left Panel: Ticker Configuration */}
@@ -316,6 +315,7 @@ const Screener = () => {
                     </div>
                 </div>
             </section>
+            </main>
         </div>
     );
 };
