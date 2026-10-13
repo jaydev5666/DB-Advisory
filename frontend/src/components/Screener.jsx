@@ -237,7 +237,7 @@ const Screener = () => {
                                                     <td style={{ padding: '18px 24px' }}>
                                                         <strong style={{ fontSize: '15px' }}>{r.stock}</strong>
                                                     </td>
-                                                    <td style={{ padding: '18px 24px' }}>
+                                                    <td style={{ padding: '18px 20px' }}>
                                                         {r.error ? (
                                                             <span style={{ color: '#ef4444', fontSize: '12px' }}>FAIL</span>
                                                         ) : (
