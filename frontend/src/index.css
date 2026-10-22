@@ -78,11 +78,17 @@ body,
   color: var(--text-main);
   min-height: 100vh;
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
-  overflow-x: hidden;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, canvas {
+  max-width: 100%;
 }
 
 /* Glass & Card styles */
@@ -446,6 +452,61 @@ textarea {
   padding: 0;
 }
 
+.responsive-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .responsive-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .responsive-grid-4 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.responsive-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .responsive-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .responsive-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.responsive-flex {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .responsive-flex {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
 .responsive-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -667,10 +728,11 @@ td {
 
 @media (max-width: 1024px) {
   .landing-header {
-    padding: 15px 30px;
+    padding: 14px 20px;
   }
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
+    margin: 40px 0 0 0;
   }
   .db-sidebar {
     width: 80px;
@@ -690,32 +752,40 @@ td {
 }
 
 @media (max-width: 768px) {
+  .landing-header {
+    padding: 12px 16px;
+  }
   .hero-section > div {
     flex-direction: column !important;
     text-align: center;
-    gap: 60px !important;
+    gap: 40px !important;
   }
   .hero-title {
-    font-size: 42px !important;
+    font-size: 38px !important;
   }
   .hero-subtitle {
-    margin: 0 auto 32px !important;
+    margin: 0 auto 24px !important;
+    font-size: 16px !important;
   }
   .hero-buttons {
     flex-direction: column !important;
-    gap: 16px !important;
+    gap: 12px !important;
     align-items: stretch !important;
-    max-width: 420px;
+    max-width: 100% !important;
+    width: 100% !important;
     margin: 0 auto 16px auto;
   }
   .hero-buttons .specular-button,
   .hero-buttons button {
     width: 100% !important;
   }
+  .specular-button {
+    overflow: hidden !important;
+  }
   .hero-stats {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 24px !important;
-    margin-top: 40px !important;
+    gap: 20px !important;
+    margin-top: 36px !important;
   }
   .chart-card-container {
     padding: 16px !important;
@@ -733,27 +803,49 @@ td {
   .chart-stats-footer {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 16px !important;
+    gap: 12px !important;
   }
   .card {
     padding: 16px !important;
   }
   .landing-nav {
-    display: none; /* Hide nav links on mobile for simplicity, or we'd need a menu */
+    display: none;
   }
   .features-grid {
     grid-template-columns: 1fr;
-    margin: 40px 20px;
+    margin: 32px 0 0 0;
+    width: 100%;
   }
   .results-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   .results-grid .full-width {
     grid-column: span 1;
   }
+  .cta-section {
+    padding: 24px 0 !important;
+    width: 100% !important;
+  }
+  .cta-box {
+    padding: 28px 16px !important;
+    margin: 20px 0 !important;
+    width: 100% !important;
+  }
+  .cta-box h2 {
+    font-size: 26px !important;
+    line-height: 1.25 !important;
+  }
+  .cta-box p {
+    font-size: 14px !important;
+  }
   .login-container {
-    width: 90%;
+    width: 100%;
+    max-width: 440px;
     height: auto;
+  }
+  .auth-card {
+    padding: 24px 16px !important;
   }
   .input-row {
     flex-direction: column;
@@ -761,52 +853,103 @@ td {
   }
   .db-layout {
     flex-direction: column;
+    height: auto !important;
+    min-height: calc(100vh - 56px);
+    overflow-y: visible !important;
   }
   .db-sidebar {
     width: 100%;
     height: auto;
     flex-direction: row;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-right: none;
     border-bottom: 1px solid var(--border);
-    padding: 10px;
+    padding: 8px 12px;
     position: sticky;
-    top: 0;
+    top: 56px;
     z-index: 100;
   }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    width: max-content;
+  }
+  .sidebar-footer {
+    display: none !important;
+  }
   .db-main {
-    padding: 20px;
+    padding: 16px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   .nav-item {
     margin-bottom: 0;
-    margin-right: 10px;
+    margin-right: 6px;
     white-space: nowrap;
   }
   .table-container {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .footer-col {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
   }
   .landing-footer {
     flex-direction: column;
     text-align: center;
+    padding: 32px 16px !important;
+    margin: 32px 0 0 0 !important;
+    gap: 16px;
   }
 }
 
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 32px !important;
+    font-size: 30px !important;
+    line-height: 1.15 !important;
   }
   .hero-stats {
     grid-template-columns: 1fr !important;
-    gap: 20px !important;
+    gap: 16px !important;
+    margin-top: 24px !important;
   }
   .chart-stats-footer {
     grid-template-columns: repeat(2, 1fr) !important;
   }
   .btn {
     width: 100%;
+  }
+}
+
+/* Admin Panel Mobile Responsiveness */
+.admin-responsive-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 32px;
+  align-items: start;
+  width: 100%;
+}
+@media (max-width: 1024px) {
+  .admin-responsive-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+@media (max-width: 768px) {
+  .admin-main-container {
+    padding: 16px !important;
+  }
+  .admin-header-container {
+    padding: 12px 16px !important;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .admin-column-card {
+    padding: 16px !important;
   }
 }
 

@@ -395,7 +395,7 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
             </div>
 
             {/* Inner Sub-navigation */}
-            <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '8px', display: 'inline-flex', gap: '4px', marginBottom: '24px' }}>
+            <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '8px', display: 'flex', flexWrap: 'wrap', maxWidth: '100%', gap: '4px', marginBottom: '24px' }}>
                 <button 
                     className={`btn-tab ${subTab === 'portfolio' ? 'active' : ''}`} 
                     onClick={() => setSubTab('portfolio')} 
@@ -415,7 +415,7 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
             {subTab === 'portfolio' ? (
                 <div>
                     {/* Metrics Banner */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '24px' }}>
+                    <div className="responsive-grid-4" style={{ marginBottom: '24px' }}>
                         <div className="card glass" style={{ padding: '20px' }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Portfolio Value</div>
                             <div style={{ fontSize: '24px', fontWeight: '800', color: 'var(--primary)', marginTop: '8px' }}>
@@ -688,17 +688,17 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
                     </div>
 
                     {/* Projections Simulator */}
-                    <div className="card glass" style={{ marginTop: '24px', padding: '24px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <h4>Compounding Growth Projections</h4>
-                            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                    <div className="card glass" style={{ marginTop: '24px', padding: 'clamp(16px, 3vw, 24px)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
+                            <h4 style={{ margin: 0 }}>Compounding Growth Projections</h4>
+                            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Return Rate: <strong>{expectedReturn}%</strong></label>
-                                    <input type="range" min="5" max="20" value={expectedReturn} onChange={e => setExpectedReturn(parseFloat(e.target.value))} style={{ width: '120px' }} />
+                                    <input type="range" min="5" max="20" value={expectedReturn} onChange={e => setExpectedReturn(parseFloat(e.target.value))} style={{ width: '100px' }} />
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Time Horizon: <strong>{projectionYears} Yrs</strong></label>
-                                    <input type="range" min="5" max="40" value={projectionYears} onChange={e => setProjectionYears(parseInt(e.target.value))} style={{ width: '120px' }} />
+                                    <input type="range" min="5" max="40" value={projectionYears} onChange={e => setProjectionYears(parseInt(e.target.value))} style={{ width: '100px' }} />
                                 </div>
                             </div>
                         </div>
@@ -723,12 +723,12 @@ const WealthCenterView = ({ currencyInfo, rates }) => {
                     </div>
 
                     {/* AI Wealth Advisor */}
-                    <div className="card glass" style={{ marginTop: '24px', padding: '28px', borderLeft: '6px solid #8b5cf6' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                            <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8b5cf6' }}>
+                    <div className="card glass" style={{ marginTop: '24px', padding: 'clamp(16px, 3vw, 28px)', borderLeft: '6px solid #8b5cf6' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                            <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8b5cf6', margin: 0 }}>
                                 <Sparkles size={20} /> AI Wealth Advisory strategist
                             </h4>
-                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                                 <select value={advisoryRisk} onChange={e => setAdvisoryRisk(e.target.value)} style={{ padding: '6px 12px', fontSize: '13px' }}>
                                     <option value="Conservative">Conservative Profile</option>
                                     <option value="Moderate">Moderate Profile</option>
@@ -916,7 +916,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
             </div>
 
             {/* Sub-navigation */}
-            <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '8px', display: 'inline-flex', gap: '4px', marginBottom: '24px' }}>
+            <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '8px', display: 'flex', flexWrap: 'wrap', maxWidth: '100%', gap: '4px', marginBottom: '24px' }}>
                 <button 
                     className={`btn-tab ${subTab === 'leaderboard' ? 'active' : ''}`} 
                     onClick={() => setSubTab('leaderboard')} 
@@ -943,7 +943,7 @@ const MarketIntelView = ({ currencyInfo, rates }) => {
             {subTab === 'leaderboard' ? (
                 <div>
                     {/* Leaderboard Segment Selector */}
-                    <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
                         <button 
                             className="btn" 
                             onClick={() => { setFirmTypeFilter('Asset Management'); setExpandedFirmId(null); }}
@@ -1451,7 +1451,7 @@ const WealthDashboard = () => {
                 </div>
             </header>
 
-            <div className="db-layout" style={{ flex: 1, overflow: 'hidden' }}>
+            <div className="db-layout">
                 <aside className="db-sidebar glass">
                     <nav className="sidebar-nav">
                         <div className="nav-item" style={{ cursor: 'default', pointerEvents: 'none', background: 'transparent', opacity: 0.7 }}>

@@ -93,20 +93,20 @@ const MarketChartWidget = () => {
                     </div>
 
                     {/* Search bar */}
-                    <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
-                        <div style={{ position:'relative' }}>
+                    <div style={{ display:'flex', gap:'8px', alignItems:'center', flexWrap:'wrap', maxWidth:'100%' }}>
+                        <div style={{ position:'relative', flex:'1 1 200px', minWidth:'0' }}>
                             <Search size={14} style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', color:'var(--text-muted)' }} />
                             <input
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && fetchChart(input, period)}
-                                placeholder="Search company or stock (e.g. CANARAHLIFE, Tata Motors, Reliance)..."
-                                style={{ paddingLeft:'30px', paddingRight:'12px', height:'40px', borderRadius:'8px', border:'1px solid var(--border)', fontSize:'13px', width:'340px', background:'#fff' }}
+                                placeholder="Search company or stock (e.g. RELIANCE, AAPL)..."
+                                style={{ paddingLeft:'30px', paddingRight:'12px', height:'40px', borderRadius:'8px', border:'1px solid var(--border)', fontSize:'13px', width:'100%', background:'#fff', boxSizing:'border-box' }}
                             />
                         </div>
                         <button
                             onClick={() => fetchChart(input, period)}
-                            style={{ height:'40px', padding:'0 16px', background:'var(--primary)', color:'#fff', border:'none', borderRadius:'8px', fontWeight:700, cursor:'pointer', fontSize:'13px' }}
+                            style={{ height:'40px', padding:'0 16px', background:'var(--primary)', color:'#fff', border:'none', borderRadius:'8px', fontWeight:700, cursor:'pointer', fontSize:'13px', flexShrink: 0 }}
                         >
                             Go
                         </button>
@@ -260,7 +260,7 @@ const TopMoversPanel = () => {
     return (
         <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', height: '100%' }}>
             {/* Header */}
-            <div style={{ padding: '20px 24px 0', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ padding: '20px clamp(14px, 3vw, 24px) 0', borderBottom: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                     <Activity size={18} color="var(--primary)" />
                     <span style={{ fontWeight: 700, fontSize: '16px' }}>NSE Top Movers</span>
@@ -305,7 +305,7 @@ const TopMoversPanel = () => {
                     return (
                         <div key={i} style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            padding: '10px 24px', borderBottom: i < rows.length - 1 ? '1px solid var(--border)' : 'none',
+                            padding: '10px clamp(14px, 3vw, 24px)', borderBottom: i < rows.length - 1 ? '1px solid var(--border)' : 'none',
                             transition: 'background 0.15s', cursor: 'default'
                         }}
                         onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
@@ -357,7 +357,7 @@ const IpoCalendarPanel = () => {
     return (
         <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', height: '100%' }}>
             {/* Header */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ padding: '20px clamp(14px, 3vw, 24px)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Calendar size={18} color="var(--primary)" />
                 <span style={{ fontWeight: 700, fontSize: '16px' }}>Upcoming IPOs</span>
                 <span style={{ marginLeft: 'auto', fontSize: '11px', color: '#6366f1', fontWeight: 700, background: '#eef2ff', padding: '2px 8px', borderRadius: '20px' }}>Next 90 Days</span>
@@ -379,7 +379,7 @@ const IpoCalendarPanel = () => {
                 )}
                 {ipos.map((ipo, i) => (
                     <div key={i} style={{
-                        padding: '14px 24px',
+                        padding: '14px clamp(14px, 3vw, 24px)',
                         borderBottom: i < ipos.length - 1 ? '1px solid var(--border)' : 'none',
                         transition: 'background 0.15s', cursor: 'default'
                     }}
@@ -667,18 +667,18 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            <section className="cta-section" style={{ width: '100%', padding: '60px 40px' }}>
-                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                    <PixelCard className="cta-box" style={{ background: '#fff', border: '1px solid var(--border)', display: 'block', textAlign: 'center', padding: '60px' }}>
-                        <h2>Ready to accelerate your deal workflow?</h2>
-                        <p>Sign up free and run your first deal analysis in under a minute.</p>
-                        <button className="btn btn-primary" style={{ padding: "10px 50px", marginTop: "20px" }} onClick={() => navigate('/dashboard')}>Get started <ArrowRight size={18} /></button>
+            <section className="cta-section" style={{ width: '100%' }}>
+                <div style={{ width: '100%' }}>
+                    <PixelCard className="cta-box" style={{ background: '#fff', border: '1px solid var(--border)', display: 'block', textAlign: 'center' }}>
+                        <h2 style={{ fontSize: 'clamp(24px, 4vw, 42px)', marginBottom: '12px' }}>Ready to accelerate your deal workflow?</h2>
+                        <p style={{ fontSize: 'clamp(14px, 1.8vw, 17px)', color: 'var(--text-muted)', marginBottom: '20px' }}>Sign up free and run your first deal analysis in under a minute.</p>
+                        <button className="btn btn-primary" onClick={() => navigate('/dashboard')}>Get started <ArrowRight size={18} /></button>
                     </PixelCard>
                 </div>
             </section>
             </main>
 
-            <footer style={{ padding: '40px 60px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
+            <footer className="landing-footer" style={{ background: '#fff', alignItems: 'center' }}>
                 <div style={{ fontSize: '18px', fontWeight: '800' }}>DB ADVISORY</div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', letterSpacing: '0.5px' }}>
                     © 2026 INSTITUTIONAL RESEARCH PLATFORM. STRICTLY CONFIDENTIAL.

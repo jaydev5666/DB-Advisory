@@ -235,7 +235,7 @@ const AdminPanel = () => {
     return (
         <div style={styles.adminLayout}>
             {/* Top Bar Navigation */}
-            <header style={styles.adminHeader}>
+            <header style={styles.adminHeader} className="admin-header-container">
                 <div style={styles.brand}>
                     <Shield size={24} style={{ color: '#d97706' }} />
                     <h2 style={styles.brandTitle}>DB Advisory <span>Admin Panel</span></h2>
@@ -251,7 +251,7 @@ const AdminPanel = () => {
             </header>
 
             {/* Main Content Area */}
-            <main style={styles.adminMain}>
+            <main style={styles.adminMain} className="admin-main-container">
                 {statsError && (
                     <div style={styles.dashboardError}>
                         <AlertCircle size={20} />
@@ -338,9 +338,9 @@ const AdminPanel = () => {
                 </div>
 
                 {/* Sub-grid: Users and Activity feed */}
-                <div style={styles.dashboardGrid}>
+                <div className="admin-responsive-grid">
                     {/* User Management table */}
-                    <div style={styles.gridColumnLeft} className="glass">
+                    <div style={styles.gridColumnLeft} className="glass admin-column-card">
                         <div style={styles.gridSectionHeader}>
                             <div>
                                 <h4 style={styles.gridSectionTitle}>Registered Client Base</h4>
@@ -407,7 +407,7 @@ const AdminPanel = () => {
                     </div>
 
                     {/* Operations Log feed */}
-                    <div style={styles.gridColumnRight} className="glass">
+                    <div style={styles.gridColumnRight} className="glass admin-column-card">
                         <div style={styles.gridSectionHeader}>
                             <div>
                                 <h4 style={styles.gridSectionTitle}>Recent Operations Feed</h4>

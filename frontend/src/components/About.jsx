@@ -45,44 +45,44 @@ const About = () => {
                 </div>
             </header>
 
-            <section className="hero-section" style={{ paddingBottom: '80px' }}>
-                <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+                <section className="hero-section" style={{ padding: '40px 0' }}>
                     <div className="tag">ABOUT</div>
-                    <h1 className="hero-title" style={{ fontSize: '96px', marginBottom: '48px' }}>Where capital markets<br />meet AI.</h1>
-                    <p className="hero-subtitle" style={{ fontSize: '24px', maxWidth: '1000px' }}>
+                    <h1 className="hero-title" style={{ fontSize: 'clamp(36px, 6vw, 84px)', lineHeight: '1.1', marginBottom: '28px' }}>Where capital markets<br />meet AI.</h1>
+                    <p className="hero-subtitle" style={{ fontSize: 'clamp(16px, 2vw, 20px)', maxWidth: '850px', lineHeight: '1.6', marginBottom: '40px' }}>
                         DB Advisory & Research is a next-generation deal intelligence platform built by investment banking practitioners. 
                         We combine structured AI reasoning with the workflows analysts and bankers actually use — comparable companies, 
                         valuation multiples, bank league tables, and pitch-ready outputs.
                     </p>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '48px', marginTop: '80px' }}>
-                        <div style={{ borderLeft: '2px solid var(--primary)', paddingLeft: '24px' }}>
-                            <h2 style={{ color: 'var(--primary)', fontSize: '32px', marginBottom: '16px' }}>01</h2>
-                            <h3 style={{ color: 'var(--primary)', fontSize: '20px', marginBottom: '12px' }}>Practitioner-built</h3>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Designed by ex-IB analysts who lived the workflow.</p>
+                    <div className="responsive-grid-3" style={{ marginTop: '40px' }}>
+                        <div style={{ borderLeft: '3px solid var(--primary)', paddingLeft: '16px' }}>
+                            <h2 style={{ color: 'var(--primary)', fontSize: '28px', marginBottom: '8px' }}>01</h2>
+                            <h3 style={{ color: 'var(--primary)', fontSize: '18px', marginBottom: '8px' }}>Practitioner-built</h3>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5' }}>Designed by ex-IB analysts who lived the workflow.</p>
                         </div>
-                        <div style={{ borderLeft: '2px solid var(--primary)', paddingLeft: '24px' }}>
-                            <h2 style={{ color: 'var(--primary)', fontSize: '32px', marginBottom: '16px' }}>02</h2>
-                            <h3 style={{ color: 'var(--primary)', fontSize: '20px', marginBottom: '12px' }}>Structured AI</h3>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Tool-call enforced outputs — no hallucinated tables.</p>
+                        <div style={{ borderLeft: '3px solid var(--primary)', paddingLeft: '16px' }}>
+                            <h2 style={{ color: 'var(--primary)', fontSize: '28px', marginBottom: '8px' }}>02</h2>
+                            <h3 style={{ color: 'var(--primary)', fontSize: '18px', marginBottom: '8px' }}>Structured AI</h3>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5' }}>Tool-call enforced outputs — no hallucinated tables.</p>
                         </div>
-                        <div style={{ borderLeft: '2px solid var(--primary)', paddingLeft: '24px' }}>
-                            <h2 style={{ color: 'var(--primary)', fontSize: '32px', marginBottom: '16px' }}>03</h2>
-                            <h3 style={{ color: 'var(--primary)', fontSize: '20px', marginBottom: '12px' }}>Pitch-ready</h3>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Output formatted for boards, clients and committees.</p>
+                        <div style={{ borderLeft: '3px solid var(--primary)', paddingLeft: '16px' }}>
+                            <h2 style={{ color: 'var(--primary)', fontSize: '28px', marginBottom: '8px' }}>03</h2>
+                            <h3 style={{ color: 'var(--primary)', fontSize: '18px', marginBottom: '8px' }}>Pitch-ready</h3>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5' }}>Output formatted for boards, clients and committees.</p>
                         </div>
                     </div>
 
-                    <div className="glass" style={{ marginTop: '100px', padding: '60px' }}>
-                        <h2 style={{ fontSize: '42px', marginBottom: '24px' }}>Our mission</h2>
-                        <p style={{ fontSize: '20px', color: 'var(--text-muted)', lineHeight: '1.8' }}>
+                    <div className="glass" style={{ marginTop: '48px', padding: 'clamp(20px, 4vw, 48px)' }}>
+                        <h2 style={{ fontSize: 'clamp(24px, 4vw, 36px)', marginBottom: '16px' }}>Our mission</h2>
+                        <p style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'var(--text-muted)', lineHeight: '1.7' }}>
                             To compress the time it takes to go from "what's the story on this company?" to a pitch-ready research note — 
                             from days to seconds. We believe modern AI, when paired with proper structure and IB domain expertise, 
                             can fundamentally change how deal teams work.
                         </p>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
 
             <footer className="landing-footer">
                 <div className="footer-col">

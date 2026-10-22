@@ -82,7 +82,7 @@ const Services = () => {
                 <section className="hero-section" style={{ paddingBottom: '40px' }}>
                     <div className="hero-content">
                         <div className="tag"><Briefcase size={14} /> PLATFORM</div>
-                        <h1 className="hero-title" style={{ fontSize: '80px' }}>Services built for deal teams.</h1>
+                        <h1 className="hero-title">Services built for deal teams.</h1>
                         <p className="hero-subtitle">A full-stack AI research platform — from initial deal screening through pitch-ready output.</p>
                     </div>
                 </section>
@@ -101,13 +101,13 @@ const Services = () => {
 
                 <section className="cta-section">
                     <div className="cta-box glass" style={{ textAlign: 'center' }}>
-                        <h2 style={{ fontSize: '48px', marginBottom: '16px' }}>Try the live platform</h2>
-                        <p style={{ marginBottom: '32px' }}>Run an end-to-end deal analysis or manage client wealth portfolios in seconds.</p>
-                        <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-                            <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '16px 32px', fontSize: '16px' }}>
+                        <h2 style={{ fontSize: 'clamp(24px, 4vw, 44px)', marginBottom: '14px' }}>Try the live platform</h2>
+                        <p style={{ marginBottom: '28px', fontSize: 'clamp(14px, 2vw, 17px)' }}>Run an end-to-end deal analysis or manage client wealth portfolios in seconds.</p>
+                        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ padding: '14px 28px', fontSize: '15px' }}>
                                 Launch Deal Analyzer
                             </button>
-                            <button className="btn btn-primary" onClick={() => navigate('/wealth-portal')} style={{ padding: '16px 32px', fontSize: '16px', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
+                            <button className="btn btn-primary" onClick={() => navigate('/wealth-portal')} style={{ padding: '14px 28px', fontSize: '15px', background: 'var(--accent)', borderColor: 'var(--accent)' }}>
                                 Launch Wealth Portal
                             </button>
                         </div>

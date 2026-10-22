@@ -116,7 +116,7 @@ const Screener = () => {
                     
                     {/* Left Panel: Ticker Configuration */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                        <SpotlightCard spotlightColor="rgba(0, 82, 204, 0.06)" style={{ background: '#fff', padding: '32px' }}>
+                        <SpotlightCard spotlightColor="rgba(0, 82, 204, 0.06)" style={{ background: '#fff', padding: 'clamp(16px, 3vw, 28px)' }}>
                             <h3 style={{ fontSize: '20px', marginBottom: '16px', fontWeight: '700' }}>Equities to Scan</h3>
                             
                             <form onSubmit={handleAddTicker} style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
@@ -169,7 +169,7 @@ const Screener = () => {
                         </SpotlightCard>
 
                         {/* Scanner Rules Explanation */}
-                        <div className="glass" style={{ padding: '28px', background: '#fff' }}>
+                        <div className="glass" style={{ padding: 'clamp(16px, 3vw, 24px)', background: '#fff' }}>
                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '16px' }}>
                                 <Info size={16} style={{ color: 'var(--accent)' }} />
                                 <h4 style={{ fontSize: '15px', fontWeight: '700', margin: 0 }}>Scoring Criteria</h4>
@@ -196,7 +196,7 @@ const Screener = () => {
                         )}
 
                         <div className="glass" style={{ background: '#fff', overflow: 'hidden' }}>
-                            <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ padding: '16px clamp(16px, 3vw, 28px)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                                 <h3 style={{ fontSize: '20px', fontWeight: '700', margin: 0 }}>Scan Results</h3>
                                 <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
                                     Showing {results.length} companies scanned

@@ -51,80 +51,82 @@ const Contact = () => {
                 </div>
             </header>
 
-            <section className="hero-section" style={{ paddingBottom: '80px' }}>
-                <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '80px' }}>
-                    <div style={{ flex: 1 }}>
-                        <div className="tag">CONTACT</div>
-                        <h1 className="hero-title" style={{ fontSize: '96px', marginBottom: '48px' }}>Let's talk deals.</h1>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+                <section className="hero-section" style={{ padding: '40px 0' }}>
+                    <div className="responsive-flex" style={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 'clamp(24px, 5vw, 64px)' }}>
+                        <div style={{ flex: 1, minWidth: 0, width: '100%' }}>
+                            <div className="tag">CONTACT</div>
+                            <h1 className="hero-title" style={{ fontSize: 'clamp(36px, 6vw, 84px)', lineHeight: '1.1', marginBottom: '28px' }}>Let's talk deals.</h1>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                                <div style={{ background: 'var(--surface-dim)', padding: '12px', borderRadius: '8px', color: 'var(--primary)' }}>
-                                    <Mail size={24} />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                                <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                                    <div style={{ background: 'var(--surface-dim)', padding: '12px', borderRadius: '8px', color: 'var(--primary)' }}>
+                                        <Mail size={22} />
+                                    </div>
+                                    <div>
+                                        <h4 style={{ color: 'var(--primary)', fontSize: '17px', marginBottom: '4px', margin: 0 }}>Email</h4>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>research@dbadvisory.ai</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 style={{ color: 'var(--primary)', fontSize: '18px', marginBottom: '4px', margin: 0 }}>Email</h4>
-                                    <p style={{ color: 'var(--text-muted)' }}>research@dbadvisory.ai</p>
-                                </div>
-                            </div>
 
-                            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                                <div style={{ background: 'var(--surface-dim)', padding: '12px', borderRadius: '8px', color: 'var(--primary)' }}>
-                                    <Video size={24} />
+                                <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                                    <div style={{ background: 'var(--surface-dim)', padding: '12px', borderRadius: '8px', color: 'var(--primary)' }}>
+                                        <Video size={22} />
+                                    </div>
+                                    <div>
+                                        <h4 style={{ color: 'var(--primary)', fontSize: '17px', marginBottom: '4px', margin: 0 }}>Demo request</h4>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Book a 30-min walkthrough.</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 style={{ color: 'var(--primary)', fontSize: '18px', marginBottom: '4px', margin: 0 }}>Demo request</h4>
-                                    <p style={{ color: 'var(--text-muted)' }}>Book a 30-min walkthrough.</p>
-                                </div>
-                            </div>
 
-                            <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                                <div style={{ background: 'var(--surface-dim)', padding: '12px', borderRadius: '8px', color: 'var(--primary)' }}>
-                                    <Building size={24} />
-                                </div>
-                                <div>
-                                    <h4 style={{ color: 'var(--primary)', fontSize: '18px', marginBottom: '4px', margin: 0 }}>Enterprise</h4>
-                                    <p style={{ color: 'var(--text-muted)' }}>Custom deployments for deal teams.</p>
+                                <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                                    <div style={{ background: 'var(--surface-dim)', padding: '12px', borderRadius: '8px', color: 'var(--primary)' }}>
+                                        <Building size={22} />
+                                    </div>
+                                    <div>
+                                        <h4 style={{ color: 'var(--primary)', fontSize: '17px', marginBottom: '4px', margin: 0 }}>Enterprise</h4>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Custom deployments for deal teams.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div style={{ flex: 1, maxWidth: '500px' }} className="glass">
-                        <div style={{ padding: '40px' }}>
-                            <form onSubmit={handleSubmit}>
-                                <div className="input-group" style={{ marginBottom: '24px' }}>
-                                    <label style={{ marginBottom: '8px', display: 'block', fontSize: '16px', color: 'var(--primary)' }}>Name</label>
-                                    <input type="text" placeholder="Your name" required style={{ background: '#fff', border: '1px solid var(--border-strong)', padding: '14px', color: 'var(--text-main)' }} />
-                                </div>
-                                <div className="input-group" style={{ marginBottom: '24px' }}>
-                                    <label style={{ marginBottom: '8px', display: 'block', fontSize: '16px', color: 'var(--primary)' }}>Email</label>
-                                    <input type="email" placeholder="Your work email" required style={{ background: '#fff', border: '1px solid var(--border-strong)', padding: '14px', color: 'var(--text-main)' }} />
-                                </div>
-                                <div className="input-group" style={{ marginBottom: '32px' }}>
-                                    <label style={{ marginBottom: '8px', display: 'block', fontSize: '16px', color: 'var(--primary)' }}>Message</label>
-                                    <textarea
-                                        placeholder="How can we help?"
-                                        required
-                                        style={{
-                                            width: '100%',
-                                            padding: '14px',
-                                            background: '#fff',
-                                            border: '1px solid var(--border-strong)',
-                                            color: 'var(--text-main)',
-                                            borderRadius: '4px',
-                                            minHeight: '150px'
-                                        }}
-                                    ></textarea>
-                                </div>
-                                <button type="submit" className="btn btn-primary full-width" style={{ padding: '16px', background: 'var(--primary)', color: '#fff' }}>
-                                    Send message
-                                </button>
-                            </form>
+                        <div style={{ flex: 1, width: '100%', maxWidth: '520px' }} className="glass">
+                            <div style={{ padding: 'clamp(20px, 4vw, 36px)' }}>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="input-group" style={{ marginBottom: '20px' }}>
+                                        <label style={{ marginBottom: '6px', display: 'block', fontSize: '14px', color: 'var(--primary)', fontWeight: '600' }}>Name</label>
+                                        <input type="text" placeholder="Your name" required style={{ background: '#fff', border: '1px solid var(--border-strong)', padding: '12px', color: 'var(--text-main)', width: '100%' }} />
+                                    </div>
+                                    <div className="input-group" style={{ marginBottom: '20px' }}>
+                                        <label style={{ marginBottom: '6px', display: 'block', fontSize: '14px', color: 'var(--primary)', fontWeight: '600' }}>Email</label>
+                                        <input type="email" placeholder="Your work email" required style={{ background: '#fff', border: '1px solid var(--border-strong)', padding: '12px', color: 'var(--text-main)', width: '100%' }} />
+                                    </div>
+                                    <div className="input-group" style={{ marginBottom: '24px' }}>
+                                        <label style={{ marginBottom: '6px', display: 'block', fontSize: '14px', color: 'var(--primary)', fontWeight: '600' }}>Message</label>
+                                        <textarea
+                                            placeholder="How can we help?"
+                                            required
+                                            style={{
+                                                width: '100%',
+                                                padding: '12px',
+                                                background: '#fff',
+                                                border: '1px solid var(--border-strong)',
+                                                color: 'var(--text-main)',
+                                                borderRadius: '4px',
+                                                minHeight: '130px'
+                                            }}
+                                        ></textarea>
+                                    </div>
+                                    <button type="submit" className="btn btn-primary full-width" style={{ padding: '14px', background: 'var(--primary)', color: '#fff' }}>
+                                        Send message
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
 
             <footer className="landing-footer">
                 <div className="footer-col">

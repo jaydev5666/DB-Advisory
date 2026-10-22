@@ -818,7 +818,7 @@ const Dashboard = () => {
                 </div>
             </header>
 
-            <div className="db-layout" style={{ flex: 1, overflow: 'hidden' }}>
+            <div className="db-layout">
                 <aside className="db-sidebar glass">
                     <nav className="sidebar-nav">
                         <div className="nav-item" style={{ cursor: 'default', pointerEvents: 'none', background: 'transparent', opacity: 0.7 }}>

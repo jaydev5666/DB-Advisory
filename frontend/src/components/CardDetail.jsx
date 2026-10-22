@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { BarChart4, ArrowLeft, FileText, Globe, TrendingUp, Shield, Download, Zap } from 'lucide-react';
+import GooeyNav from './GooeyNav';
 
 const CardDetail = () => {
     const { type } = useParams();
@@ -8,6 +9,15 @@ const CardDetail = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: 'guest', name: 'Guest User', role: 'user' });
     const data = location.state?.data;
+
+    const navItems = [
+        { label: "Home", href: "#", onClick: () => navigate('/') },
+        { label: "Services", href: "#", onClick: () => navigate('/services') },
+        { label: "Screener", href: "#", onClick: () => navigate('/screener') },
+        { label: "Wealth Portal", href: "#", onClick: () => navigate('/wealth-portal') },
+        { label: "About", href: "#", onClick: () => navigate('/about') },
+        { label: "Contact", href: "#", onClick: () => navigate('/contact') }
+    ];
 
     useEffect(() => {
         const savedUser = localStorage.getItem('db_user');
@@ -86,50 +96,43 @@ const CardDetail = () => {
     return (
         <div id="landing-screen">
             <header className="landing-header">
-                <div className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-                    <BarChart4 size={28} />
-                    <h2>DB Advisory <span>& Research</span></h2>
+                <div className="logo" style={{ cursor: 'pointer', gap: '8px' }} onClick={() => navigate('/')}>
+                    <h2 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>DB ADVISORY</h2>
                 </div>
-                <nav className="landing-nav">
-                    <a onClick={() => navigate('/')}>Home</a>
-                    <a onClick={() => navigate('/services')}>Services</a>
-                    <a onClick={() => navigate('/wealth-portal')}>Wealth Portal</a>
-                    <a onClick={() => navigate('/about')}>About</a>
-                    <a onClick={() => navigate('/contact')}>Contact</a>
-                </nav>
+                <GooeyNav items={navItems} initialActiveIndex={-1} />
                 <div className="header-actions">
                     <button className="btn" style={{ color: 'var(--primary)', background: 'transparent' }} onClick={handleSignOut}>Sign out</button>
                 </div>
             </header>
 
-            <main style={{ maxWidth: '1200px', margin: '60px auto', padding: '0 40px' }}>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <button 
                     onClick={() => navigate('/dashboard')} 
-                    style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '32px', fontSize: '16px', fontWeight: '600' }}
+                    style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', fontSize: '15px', fontWeight: '600' }}
                 >
                     <ArrowLeft size={18} /> Back to Analysis
                 </button>
 
-                <div style={{ marginBottom: '48px' }}>
+                <div style={{ marginBottom: '36px' }}>
                     <div className="tag" style={{ display: 'flex', alignItems: 'center', gap: '8px', width: 'fit-content' }}>
                         {getIcon()}
                         {type.toUpperCase()}
                     </div>
-                    <h1 style={{ fontSize: '48px', marginTop: '16px', color: 'var(--primary)' }}>{getTitle()}</h1>
-                    <p style={{ fontSize: '20px', color: 'var(--text-muted)', marginTop: '8px' }}>
+                    <h1 style={{ fontSize: 'clamp(28px, 5vw, 44px)', marginTop: '14px', color: 'var(--primary)' }}>{getTitle()}</h1>
+                    <p style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'var(--text-muted)', marginTop: '8px' }}>
                         Comprehensive intelligence for {data.company} ({data.deal_type})
                     </p>
                 </div>
 
-                <div style={{ marginBottom: '80px' }}>
+                <div style={{ marginBottom: '48px' }}>
                     {getContent()}
                 </div>
 
-                <div className="glass" style={{ padding: '40px', background: 'rgba(201, 162, 39, 0.05)', border: '1px dashed var(--primary)' }}>
-                    <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="glass" style={{ padding: 'clamp(20px, 4vw, 36px)', background: 'rgba(201, 162, 39, 0.05)', border: '1px dashed var(--primary)' }}>
+                    <h3 style={{ marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '18px' }}>
                         <Zap size={20} color="var(--primary)" /> Analyst Commentary
                     </h3>
-                    <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                    <p style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '14px', lineHeight: '1.6' }}>
                         "This detailed {type} view synthesizes proprietary market data with real-time sector dynamics. 
                         The identified trends are consistent with current institutional workflows and pitch-ready requirements."
                     </p>
