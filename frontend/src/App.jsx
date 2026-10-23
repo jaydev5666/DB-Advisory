@@ -22,7 +22,17 @@ function App() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Router>
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -10, pointerEvents: 'none', opacity: 0.08, overflow: 'hidden' }}>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100dvh',
+          zIndex: -10,
+          pointerEvents: 'none',
+          opacity: 0.06,
+          overflow: 'hidden'
+        }}>
           <MoltenMetal
             color1="#0052cc"
             color2="#00daff"

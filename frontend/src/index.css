@@ -19,6 +19,28 @@
   font-family: 'Inter', sans-serif;
 }
 
+html,
+body,
+#root {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  width: 100%;
+  min-height: 100dvh;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 /* Tailwind Utility Polyfills for Global Width Correction */
 .w-full {
   width: 100% !important;
@@ -69,26 +91,6 @@
 
 .page-section + .page-section {
   padding-top: 0;
-}
-
-html,
-body,
-#root {
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  min-height: 100vh;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-body {
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-img, svg, canvas {
-  max-width: 100%;
 }
 
 /* Glass & Card styles */
@@ -159,7 +161,6 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Use clamp so the header content aligns with max-w-7xl (1280px) page gutter */
   padding: 20px clamp(16px, calc((100vw - 1280px) / 2 + 32px), 80px);
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -256,7 +257,7 @@ p {
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 32px;
   margin-top: 60px;
   width: 100%;
@@ -293,7 +294,6 @@ p {
   width: 100%;
 }
 
-
 .landing-footer {
   padding: 50px 40px;
   display: flex;
@@ -326,23 +326,23 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
 }
 
 .login-container {
-  width: 500px;
-  height: 500px;
+  width: min(500px, 92vw);
+  min-height: 420px;
 }
 
 .db-layout {
   display: flex;
-  height: 100vh;
+  min-height: 100dvh;
   width: 100%;
 }
 
 .db-sidebar {
-  width: 280px;
+  width: clamp(220px, 22vw, 280px);
   background: #fff;
   border-right: 1px solid var(--border);
   padding: 32px;
@@ -353,9 +353,9 @@ p {
 .db-main {
   flex: 1;
   overflow-y: auto;
-  padding: 40px 48px;
+  padding: clamp(16px, 2vw, 48px);
   background: var(--bg-dark);
-  width: 0; /* flex item width trick — forces flex:1 to not overflow sidebar */
+  width: 0;
   min-width: 0;
 }
 
@@ -395,6 +395,7 @@ p {
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  min-width: 0;
 }
 
 .input-group label {
@@ -411,12 +412,13 @@ textarea {
   padding: 12px 16px;
   border-radius: 4px;
   font-size: 15px;
+  width: 100%;
 }
 
 /* Results Section */
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -425,7 +427,7 @@ textarea {
 }
 
 .card {
-  padding: 24px;
+  padding: clamp(16px, 2vw, 24px);
   border-radius: 12px;
   border: 1px solid var(--border);
 }
@@ -454,14 +456,14 @@ textarea {
 
 .responsive-grid-4 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   width: 100%;
 }
 
 @media (max-width: 1024px) {
   .responsive-grid-4 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
 }
@@ -475,14 +477,14 @@ textarea {
 
 .responsive-grid-3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
   width: 100%;
 }
 
 @media (max-width: 1024px) {
   .responsive-grid-3 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
   }
 }
@@ -509,13 +511,13 @@ textarea {
 
 .responsive-grid-2 {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 32px;
 }
 
 .responsive-grid-1-3 {
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
   gap: 40px;
 }
 
@@ -582,7 +584,7 @@ td {
 
 /* Auth Card Styles */
 .auth-card {
-  padding: 40px;
+  padding: clamp(24px, 3vw, 40px);
   border-radius: 16px;
 }
 
@@ -692,7 +694,7 @@ td {
 .hero-stats {
   margin-top: 64px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 80px;
   width: 100%;
 }
@@ -731,7 +733,7 @@ td {
     padding: 14px 20px;
   }
   .features-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 40px 0 0 0;
   }
   .db-sidebar {
@@ -783,7 +785,7 @@ td {
     overflow: hidden !important;
   }
   .hero-stats {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 20px !important;
     margin-top: 36px !important;
   }
@@ -802,7 +804,7 @@ td {
   }
   .chart-stats-footer {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 12px !important;
   }
   .card {
@@ -840,8 +842,7 @@ td {
     font-size: 14px !important;
   }
   .login-container {
-    width: 100%;
-    max-width: 440px;
+    width: min(440px, 92vw);
     height: auto;
   }
   .auth-card {
@@ -853,8 +854,8 @@ td {
   }
   .db-layout {
     flex-direction: column;
+    min-height: 100dvh;
     height: auto !important;
-    min-height: calc(100vh - 56px);
     overflow-y: visible !important;
   }
   .db-sidebar {
@@ -918,7 +919,7 @@ td {
     margin-top: 24px !important;
   }
   .chart-stats-footer {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
   .btn {
     width: 100%;
