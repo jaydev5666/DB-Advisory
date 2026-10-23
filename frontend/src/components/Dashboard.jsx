@@ -119,7 +119,7 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
                     <div className="spinner" style={{ width:'24px', height:'24px', borderWidth:'3px' }}></div>
                 </div>
             )}
-            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'20px' }}>
+            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'20px', gap:'16px', flexWrap:'wrap' }}>
                 <div>
                     <div style={{ fontSize:'13px', color:'var(--text-muted)', fontWeight:500, letterSpacing:'0.05em', textTransform:'uppercase' }}>
                         {company} · Price Performance
@@ -129,7 +129,7 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
                             </span>
                         )}
                     </div>
-                    <div style={{ display:'flex', alignItems:'baseline', gap:'12px', marginTop:'6px' }}>
+                    <div style={{ display:'flex', alignItems:'baseline', gap:'12px', marginTop:'6px', flexWrap:'wrap' }}>
                         <span style={{ fontSize:'32px', fontWeight:700, letterSpacing:'-0.5px', color:'var(--text)' }}>
                             {sym}{Number(last).toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 })}
                         </span>
@@ -141,9 +141,8 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
                         vs. start of period · Open: {fmt(data[0]?.price)}
                     </div>
                 </div>
-                <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'8px' }}>
-                    {/* Currency Dropdown Selector */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'8px', width:'100%', maxWidth:'360px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', width:'100%', justifyContent:'flex-end', flexWrap:'wrap' }}>
                         <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>Currency:</span>
                         <select
                             value={displayCurrency}
@@ -161,9 +160,10 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
                                 transition: 'all 0.2s',
                                 appearance: 'none',
                                 WebkitAppearance: 'none',
-                                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%232563eb' d='M0,0 L10,0 L5,6 Z'/></svg>")`,
+                                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%232563eb' d='M0,0 L10,0 L5,6 Z' /></svg>")`,
                                 backgroundRepeat: 'no-repeat',
-                                backgroundPosition: 'right 8px center'
+                                backgroundPosition: 'right 8px center',
+                                minWidth: '150px'
                             }}
                         >
                             <option value="INR">₹ INR (Rupee)</option>
@@ -174,10 +174,9 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
                             <option value="GBP">£ GBP (Pound)</option>
                         </select>
                     </div>
-                    {/* Period tabs */}
-                    <div style={{ display:'flex', gap:'4px', background:'rgba(0,0,0,0.04)', borderRadius:'8px', padding:'4px' }}>
+                    <div style={{ display:'flex', gap:'4px', background:'rgba(0,0,0,0.04)', borderRadius:'8px', padding:'4px', flexWrap:'wrap', justifyContent:'flex-end' }}>
                         {['1D','1W','3M','6M','1Y','5Y'].map(p => (
-                            <div key={p} onClick={() => handlePeriodChange(p)} style={{ padding:'4px 10px', borderRadius:'6px', fontSize:'12px', fontWeight: p===period ? 700 : 500, color: p===period ? '#fff' : 'var(--text-muted)', background: p===period ? chartColor : 'transparent', cursor:'pointer', transition:'all 0.15s' }}>
+                            <div key={p} onClick={() => handlePeriodChange(p)} style={{ padding:'4px 10px', borderRadius:'6px', fontSize:'12px', fontWeight: p===period ? 700 : 500, color: p===period ? '#fff' : '#334155', background: p===period ? 'var(--primary)' : 'transparent', cursor:'pointer' }}>
                                 {p}
                             </div>
                         ))}
@@ -204,7 +203,7 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
                 </ResponsiveContainer>
             </div>
 
-            <div style={{ display:'flex', gap:'32px', marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(0,0,0,0.06)' }}>
+            <div style={{ display:'flex', gap:'32px', marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(0,0,0,0.06)', flexWrap:'wrap' }}>
                 {[
                     { label:'Open',    value: fmt(data[0]?.price) },
                     { label:'Close',   value: fmt(data[data.length-1]?.price) },
@@ -375,17 +374,14 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                                 const sym = getCurrencySymbol(displayCurrency);
                                 const convertedPrice = (priceVal * displayRate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                                 return (
-                                    <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: config.color, color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '700', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                    <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: config.color, color: '#fff', padding: '4px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 700, display:'flex', gap:'8px', alignItems:'center' }}>
                                         {sym}{convertedPrice}
-                                        <span style={{ fontSize: '10px', opacity: 0.8, borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>{liveQuote.source === 'yfinance' ? 'YF' : 'AV'}</span>
+                                        <span style={{ fontSize: '10px', opacity: 0.8, borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>{liveQuote.source === 'yfinance' ? 'YF' : 'LIVE'}</span>
                                     </div>
                                 );
                             })()}
                         </div>
                     </div>
-                    
-
-
                     <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading}
                         style={{ background: config.color, borderColor: config.color }}>
                         <Zap size={18} /> Analyze {config.label}
@@ -416,7 +412,7 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                     )}
                     {show('news') && liveNews?.headlines?.length > 0 && (
                         <div className="card glass full-width" style={{ borderLeft: `4px solid ${config.color}` }}>
-                            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px' }}>
+                            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px', flexWrap:'wrap', gap:'10px' }}>
                                 <h4><Zap size={18} style={{ color: config.color }} /> Market News</h4>
                                 <span style={{ 
                                     background: liveNews.sentiment === 'Bullish' ? '#dcfce7' : (liveNews.sentiment === 'Bearish' ? '#fee2e2' : '#f1f5f9'),
@@ -432,7 +428,7 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {liveNews.headlines.map((h, i) => (
                                     <a key={i} href={h.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration:'none', color:'inherit' }}>
-                                        <div className="news-item" style={{ padding:'12px', background:'rgba(0,0,0,0.02)', borderRadius:'6px', border:'1px solid var(--border)', transition: 'all 0.2s' }}>
+                                        <div className="news-item" style={{ padding:'12px', background:'rgba(0,0,0,0.02)', borderRadius:'6px', border:'1px solid var(--border)', transition: 'all 0.2s ease' }}>
                                             <div style={{ fontSize:'14px', fontWeight:'600' }}>{h.title}</div>
                                             <div style={{ fontSize:'11px', color:'var(--text-muted)', marginTop:'4px', fontWeight: '700' }}>{h.source?.toUpperCase()}</div>
                                         </div>
@@ -481,11 +477,11 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                     )}
                     {show('benchmarking') && result.benchmarking_data?.length > 0 && (
                         <div className="card glass full-width">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap:'wrap', gap:'12px' }}>
                                 <h4><TrendingUp size={18} style={{ color: config.color }} /> Multiples Benchmarking</h4>
-                                <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '6px', display: 'flex', gap: '4px' }}>
-                                    <button className={`btn-tab ${chartTab === 'pe' ? 'active' : ''}`} onClick={() => setChartTab('pe')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'pe' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>P/E</button>
-                                    <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'ev' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>EV/EBITDA</button>
+                                <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '6px', display: 'flex', gap: '4px', flexWrap:'wrap' }}>
+                                    <button className={`btn-tab ${chartTab === 'pe' ? 'active' : ''}`} onClick={() => setChartTab('pe')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', background: chartTab === 'pe' ? '#fff' : 'transparent', border: '1px solid transparent', fontWeight: 700, cursor:'pointer' }}>P/E</button>
+                                    <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', background: chartTab === 'ev' ? '#fff' : 'transparent', border: '1px solid transparent', fontWeight: 700, cursor:'pointer' }}>EV/EBITDA</button>
                                 </div>
                             </div>
                             <div style={{ height:'380px' }}>
@@ -558,13 +554,10 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(false);
     const [latestData, setLatestData] = useState(null);
 
-
-
     // Currency State
     const [currencyInfo, setCurrencyInfo] = useState({ symbol: '$', code: 'USD' });
     const [rates, setRates] = useState({ USD: 1 });
 
-    // Detect user's country and load exchange rates once on mount
     useEffect(() => {
         (async () => {
             const currency = await detectCurrency();
@@ -585,14 +578,12 @@ const Dashboard = () => {
             setUser({ username: 'guest', name: 'Guest User', role: 'user' });
         }
 
-        // Restore last analysis data
         const savedAnalysis = localStorage.getItem('latest_analysis');
         if (savedAnalysis) {
             setLatestData(JSON.parse(savedAnalysis));
         }
     }, []);
 
-    // Persist analysis data whenever it changes
     useEffect(() => {
         if (latestData) {
             localStorage.setItem('latest_analysis', JSON.stringify(latestData));
@@ -613,7 +604,6 @@ const Dashboard = () => {
                     isGoogle: true
                 };
 
-                // Save user to MongoDB backend
                 const res = await api.googleLogin(userData.username, userData.name);
                 if (res.data.token) {
                     localStorage.setItem('db_token', res.data.token);
@@ -659,7 +649,6 @@ const Dashboard = () => {
                     localStorage.setItem('db_user', JSON.stringify(res.data.user || { username: email }));
                     setUser(res.data.user || { username: email });
                 } else {
-                    // Fallback to auto-login
                     const loginRes = await api.login(email, password);
                     if (loginRes.data.status === 'success') {
                         localStorage.setItem('db_token', loginRes.data.token);
@@ -707,7 +696,6 @@ const Dashboard = () => {
         }
     };
 
-    // Live quote fetch on input blur or after delay
     useEffect(() => {
         if (company.length >= 1) {
             const timer = setTimeout(async () => {
@@ -719,8 +707,6 @@ const Dashboard = () => {
             return () => clearTimeout(timer);
         }
     }, [company]);
-
-
 
     const handleDownload = async () => {
         if (!latestData) return;
@@ -805,7 +791,7 @@ const Dashboard = () => {
     ];
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', width: '100%', overflowX: 'hidden' }}>
             <header className="landing-header">
                 <div className="logo" style={{ cursor: 'pointer', gap: '8px' }} onClick={() => navigate('/')}>
                     <h2 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>DB ADVISORY</h2>
@@ -862,221 +848,6 @@ const Dashboard = () => {
                 </aside>
 
                 <main className="db-main">
-                    {false && (
-                        <div className="dashboard-body">
-                            <div className="input-panel glass">
-                                <h3>Analyze a Deal</h3>
-                                <div className="input-row">
-                                    <div className="input-group">
-                                        <label>Company Ticker / Name</label>
-                                        <div style={{ position: 'relative' }}>
-                                            <input
-                                                type="text"
-                                                value={company}
-                                                onChange={(e) => setCompany(e.target.value)}
-                                                placeholder="e.g. Goldman Sachs or GS"
-                                                style={{ paddingRight: (liveQuote && !isNaN(parseFloat(liveQuote.price))) ? '130px' : '15px' }}
-                                            />
-                                            {liveQuote && (() => {
-                                                const priceVal = parseFloat(liveQuote.price);
-                                                if (isNaN(priceVal)) return null;
-                                                const getStockCurrency = (symbol) => {
-                                                    const u = (symbol || '').toUpperCase();
-                                                    if (u.includes('.NS') || u.includes('.BO') || u.includes('RELIANCE') || u.includes('TCS') || u.includes('INFY') || u.includes('WIPRO')) return 'INR';
-                                                    if (u.includes('.L')) return 'GBP';
-                                                    return 'USD';
-                                                };
-                                                const displayCurrency = currencyInfo?.code || 'USD';
-                                                const stockCurrency = getStockCurrency(company);
-                                                const fromRate = rates?.[stockCurrency] || 1;
-                                                const toRate = rates?.[displayCurrency] || 1;
-                                                const displayRate = toRate / fromRate;
-                                                const sym = getCurrencySymbol(displayCurrency);
-                                                const convertedPrice = (priceVal * displayRate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                                return (
-                                                    <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'var(--primary)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '700', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                                        {sym}{convertedPrice}
-                                                        <span style={{ fontSize: '10px', opacity: 0.8, borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>{liveQuote.source === 'yfinance' ? 'YF' : 'AV'}</span>
-                                                    </div>
-                                                );
-                                            })()}
-                                        </div>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Deal Type</label>
-                                        <select value={dealType} onChange={(e) => setDealType(e.target.value)}>
-                                            <option value="M&A">M&A</option>
-                                            <option value="IPO">IPO</option>
-                                            <option value="LBO">LBO</option>
-                                            <option value="Restructuring">Restructuring</option>
-                                        </select>
-                                    </div>
-
-                                    <button className="btn btn-primary" onClick={handleAnalyze}>
-                                        <Zap size={18} /> Generate Intelligence
-                                    </button>
-                                </div>
-                            </div>
-
-                            {loading && (
-                                <div id="loading">
-                                    <div className="spinner"></div>
-                                    <p>AI synthesizing deal structure, live market comps, and IB matrices...</p>
-                                </div>
-                            )}
-
-                            {latestData && (
-                                <div id="results-panel">
-                                    <div className="actions-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                                        <h2 id="deal-title">{latestData.company} - {latestData.deal_type} Analysis</h2>
-                                        <button className="btn btn-secondary" onClick={handleDownload}>
-                                            <Download size={18} /> Export Pitchbook (.pptx)
-                                        </button>
-                                    </div>
-
-                                    <div className="results-grid">
-                                        <div className="card glass clickable-card" onClick={() => handleCardClick('overview')}>
-                                            <h4><FileText size={18} /> Deal Overview</h4>
-                                            <p>{latestData.analysis.overview}</p>
-                                        </div>
-                                        <div className="card glass clickable-card" onClick={() => handleCardClick('industry')}>
-                                            <h4><Globe size={18} /> Industry Landscape</h4>
-                                            <p>{latestData.analysis.industry}</p>
-                                        </div>
-
-                                        {liveNews && liveNews.headlines && liveNews.headlines.length > 0 && (
-                                            <div className="card glass full-width" style={{ borderLeft: '4px solid #3b82f6' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                                    <h4><Zap size={18} /> Market Intelligence: Recent News</h4>
-                                                    <span className={`tag ${liveNews.sentiment.toLowerCase()}`} style={{ 
-                                                        background: liveNews.sentiment === 'Bullish' ? '#dcfce7' : (liveNews.sentiment === 'Bearish' ? '#fee2e2' : '#f1f5f9'),
-                                                        color: liveNews.sentiment === 'Bullish' ? '#166534' : (liveNews.sentiment === 'Bearish' ? '#991b1b' : '#475569'),
-                                                        padding: '4px 12px', borderRadius: '100px', fontSize: '11px', fontWeight: '800'
-                                                    }}>
-                                                        {liveNews.sentiment.toUpperCase()} SENTIMENT
-                                                    </span>
-                                                </div>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                                    {liveNews.headlines.map((h, i) => (
-                                                        <a key={i} href={h.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                                            <div className="news-item" style={{ padding: '12px', background: 'rgba(0,0,0,0.02)', borderRadius: '6px', border: '1px solid var(--border)', transition: 'all 0.2s' }}>
-                                                                <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{h.title}</div>
-                                                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700' }}>{h.source.toUpperCase()}</div>
-                                                            </div>
-                                                        </a>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        <div className="card glass full-width" style={{ borderLeft: '4px solid var(--primary)' }}>
-                                            <h4><TrendingUp size={18} /> Financial Snapshot</h4>
-                                            <p style={{ fontSize: '18px', color: 'var(--primary)', fontWeight: '500' }}>{latestData.analysis.figures}</p>
-                                        </div>
-                                        <div className="card glass clickable-card" onClick={() => handleCardClick('rationale')}>
-                                            <h4><TrendingUp size={18} /> Investment Rationale</h4>
-                                            <p>{latestData.analysis.rationale}</p>
-                                        </div>
-                                        <div className="card glass clickable-card" onClick={() => handleCardClick('risks')}>
-                                            <h4><Shield size={18} /> Key Risks</h4>
-                                            <p>{latestData.analysis.risks}</p>
-                                        </div>
-
-                                        {latestData.history_data && latestData.history_data.length > 0 && (
-                                            <PriceChartCard
-                                                key={latestData.company}
-                                                company={latestData.company}
-                                                initialData={latestData.history_data}
-                                                currencyInfo={currencyInfo}
-                                                rates={rates}
-                                                initialStockCurrency={latestData.currency}
-                                            />
-                                        )}
-
-                                        {latestData.benchmarking_data && latestData.benchmarking_data.length > 0 && (
-                                            <div className="card glass full-width">
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                                                    <h4><TrendingUp size={18} /> Multiples Benchmarking</h4>
-                                                    <div className="tabs" style={{ background: 'var(--surface-dim)', padding: '4px', borderRadius: '6px', display: 'flex', gap: '4px' }}>
-                                                        <button className={`btn-tab ${chartTab === 'pe' ? 'active' : ''}`} onClick={() => setChartTab('pe')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'pe' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>P/E</button>
-                                                        <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', border: 'none', background: chartTab === 'ev' ? '#fff' : 'transparent', cursor: 'pointer', fontWeight: '700' }}>EV/EBITDA</button>
-                                                    </div>
-                                                </div>
-                                                <div style={{ height: '380px', width: '100%' }}>
-                                                    <ResponsiveContainer width="100%" height="100%">
-                                                        <BarChart data={latestData.benchmarking_data}>
-                                                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                                                            <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={10} tickLine={false} axisLine={false} />
-                                                            <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-                                                            <Tooltip
-                                                                contentStyle={{ background: '#fff', border: '1px solid var(--border-strong)', borderRadius: '8px' }}
-                                                                itemStyle={{ color: 'var(--primary)' }}
-                                                                cursor={{ fill: 'rgba(0,0,0,0.02)' }}
-                                                            />
-                                                            <Bar dataKey={chartTab === 'pe' ? 'pe_ratio' : 'ev_ebitda'} radius={[4, 4, 0, 0]}>
-                                                                {latestData.benchmarking_data.map((entry, index) => (
-                                                                    <Cell key={`cell-${index}`} fill={index === 0 ? 'var(--primary)' : 'var(--border-strong)'} />
-                                                                ))}
-                                                            </Bar>
-                                                        </BarChart>
-                                                    </ResponsiveContainer>
-                                                </div>
-                                                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '12px', textAlign: 'center' }}>
-                                                    Gold bar indicates Target Company ({latestData.company})
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {latestData.banks && latestData.banks.length > 0 && (
-                                            <div className="card glass full-width">
-                                                <h4><TrendingUp size={18} /> IB Bank Matrix (Probability Engine)</h4>
-                                                <div className="table-container">
-                                                    <table>
-                                                        <thead>
-                                                            <tr><th>Bank</th><th>ECM Score</th><th>Probability</th></tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {latestData.banks.map((b, i) => (
-                                                                <tr key={i}>
-                                                                    <td>{b.bank}</td>
-                                                                    <td>{b.score}</td>
-                                                                    <td style={{ color: b.probability === 'High' ? '#10b981' : (b.probability === 'Medium' ? '#f59e0b' : '#ef4444') }}>
-                                                                        {b.probability}
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {latestData.comps && latestData.comps.length > 0 && (
-                                            <div className="card glass full-width">
-                                                <h4><Zap size={18} /> Valuation Comparable Peer Group</h4>
-                                                <div className="table-container">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                {latestData.comps[0] && latestData.comps[0].map((h, i) => <th key={i}>{h}</th>)}
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {latestData.comps.slice(1).map((row, i) => (
-                                                                <tr key={i}>
-                                                                    {row.map((cell, j) => <td key={j}>{cell}</td>)}
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
                     {Object.keys(DEAL_CONFIGS).includes(view) && (
                         <DealRoomView
                             key={view}
@@ -1086,9 +857,7 @@ const Dashboard = () => {
                             rates={rates}
                         />
                     )}
-
                 </main>
-
             </div>
         </div>
     );
