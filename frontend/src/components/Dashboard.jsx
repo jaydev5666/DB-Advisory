@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     BarChart4, LayoutDashboard, CreditCard,
     FileText, Zap, TrendingUp, Download, RefreshCw,
-    Globe, Shield, Building2, Wallet, Target, Compass, Trash2, Plus, Coins, Sparkles, HelpCircle, Activity, Info
+    Globe, Shield, Building2, Wallet, Target, Compass, Trash2, Plus, Coins, Sparkles, HelpCircle, Activity, Info, Menu, X
 } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api, detectCurrency, getAllExchangeRates, getCurrencySymbol } from '../services/api';
@@ -21,31 +21,22 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
     const [data, setData]               = useState(initialData);
     const [loading, setLoading]         = useState(false);
     const [stockCurrency, setStockCurrency] = useState(initialStockCurrency || (() => {
-        // Detect from company name on first render
         const u = (company || '').toUpperCase();
         if (u.includes('.NS') || u.includes('.BO')) return 'INR';
         if (u.includes('.L')) return 'GBP';
         return 'USD';
     }));
-    
     const userCode = currencyInfo?.code || 'USD';
     const [displayCurrency, setDisplayCurrency] = useState(userCode);
 
-    // Sync initialData changes
     useEffect(() => {
-        if (initialData) {
-            setData(initialData);
-        }
+        if (initialData) setData(initialData);
     }, [initialData]);
 
-    // Sync currencyInfo (geolocation detection) changes
     useEffect(() => {
-        if (currencyInfo && currencyInfo.code) {
-            setDisplayCurrency(currencyInfo.code);
-        }
+        if (currencyInfo && currencyInfo.code) setDisplayCurrency(currencyInfo.code);
     }, [currencyInfo]);
 
-    // Sync initialStockCurrency/company ticker updates
     useEffect(() => {
         if (initialStockCurrency) {
             setStockCurrency(initialStockCurrency);
@@ -61,7 +52,6 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
         }
     }, [initialStockCurrency, company]);
 
-    // Universal multi-currency rate calculation
     const getDisplayRate = () => {
         const fromRate = rates?.[stockCurrency] || 1;
         const toRate = rates?.[displayCurrency] || 1;
@@ -223,69 +213,21 @@ const PriceChartCard = ({ company, initialData, currencyInfo, rates, initialStoc
 };
 
 const DEAL_CONFIGS = {
-    ma: {
-        label: 'M&A',
-        dealType: 'M&A',
-        color: '#6366f1',
-        description: 'Mergers & Acquisitions — strategic fit, synergies, valuation premium analysis',
-        showSections: ['overview', 'industry', 'rationale', 'risks', 'comps', 'benchmarking', 'banks', 'chart', 'news'],
-    },
-    ipo: {
-        label: 'IPO',
-        dealType: 'IPO',
-        color: '#10b981',
-        description: 'Initial Public Offering — equity story, listing prospects, price band analysis',
-        showSections: ['overview', 'industry', 'rationale', 'risks', 'banks', 'chart', 'news'],
-    },
-    lbo: {
-        label: 'LBO',
-        dealType: 'LBO',
-        color: '#f59e0b',
-        description: 'Leveraged Buyout — debt capacity, cash flow stability, exit strategy',
-        showSections: ['overview', 'rationale', 'risks', 'benchmarking', 'banks', 'chart'],
-    },
-    restr: {
-        label: 'Restructuring',
-        dealType: 'Restructuring',
-        color: '#ef4444',
-        description: 'Restructuring — debt re-profiling, asset sales, liquidity management',
-        showSections: ['overview', 'industry', 'risks', 'banks', 'chart', 'news'],
-    },
-    ecm: {
-        label: 'ECM',
-        dealType: 'ECM',
-        color: '#8b5cf6',
-        description: 'Equity Capital Markets — follow-on offerings, rights issues, block trades',
-        showSections: ['overview', 'rationale', 'benchmarking', 'banks', 'chart', 'news'],
-    },
-    dcm: {
-        label: 'DCM',
-        dealType: 'DCM',
-        color: '#0ea5e9',
-        description: 'Debt Capital Markets — bond issuance, credit analysis, yield positioning',
-        showSections: ['overview', 'industry', 'risks', 'banks', 'news'],
-    },
-    pf: {
-        label: 'Project Finance',
-        dealType: 'Project Finance',
-        color: '#f43f5e',
-        description: 'Project Finance — infrastructure financing, SPV analysis, cash flow coverage',
-        showSections: ['overview', 'industry', 'rationale', 'risks', 'banks', 'chart', 'news'],
-    },
-    valuation: {
-        label: 'Valuation',
-        dealType: 'M&A',
-        color: '#14b8a6',
-        description: 'Standalone valuation — trading comps, transaction comps, DCF triangulation',
-        showSections: ['overview', 'comps', 'benchmarking', 'chart', 'news'],
-    }
+    ma: { label: 'M&A', dealType: 'M&A', color: '#6366f1', description: 'Mergers & Acquisitions — strategic fit, synergies, valuation premium analysis', showSections: ['overview', 'industry', 'rationale', 'risks', 'comps', 'benchmarking', 'banks', 'chart', 'news'] },
+    ipo: { label: 'IPO', dealType: 'IPO', color: '#10b981', description: 'Initial Public Offering — equity story, listing prospects, price band analysis', showSections: ['overview', 'industry', 'rationale', 'risks', 'banks', 'chart', 'news'] },
+    lbo: { label: 'LBO', dealType: 'LBO', color: '#f59e0b', description: 'Leveraged Buyout — debt capacity, cash flow stability, exit strategy', showSections: ['overview', 'rationale', 'risks', 'benchmarking', 'banks', 'chart'] },
+    restr: { label: 'Restructuring', dealType: 'Restructuring', color: '#ef4444', description: 'Restructuring — debt re-profiling, asset sales, liquidity management', showSections: ['overview', 'industry', 'risks', 'banks', 'chart', 'news'] },
+    ecm: { label: 'ECM', dealType: 'ECM', color: '#8b5cf6', description: 'Equity Capital Markets — follow-on offerings, rights issues, block trades', showSections: ['overview', 'rationale', 'benchmarking', 'banks', 'chart', 'news'] },
+    dcm: { label: 'DCM', dealType: 'DCM', color: '#0ea5e9', description: 'Debt Capital Markets — bond issuance, credit analysis, yield positioning', showSections: ['overview', 'industry', 'risks', 'banks', 'news'] },
+    pf: { label: 'Project Finance', dealType: 'Project Finance', color: '#f43f5e', description: 'Project Finance — infrastructure financing, SPV analysis, cash flow coverage', showSections: ['overview', 'industry', 'rationale', 'risks', 'banks', 'chart', 'news'] },
+    valuation: { label: 'Valuation', dealType: 'M&A', color: '#14b8a6', description: 'Standalone valuation — trading comps, transaction comps, DCF triangulation', showSections: ['overview', 'comps', 'benchmarking', 'chart', 'news'] },
 };
 
 const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
     const config = DEAL_CONFIGS[dealKey];
-    const [company, setCompany]   = useState('');
-    const [loading, setLoading]   = useState(false);
-    const [result, setResult]     = useState(null);
+    const [company, setCompany] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState(null);
     const [liveQuote, setLiveQuote] = useState(null);
     const [liveNews, setLiveNews] = useState(null);
     const [chartTab, setChartTab] = useState('pe');
@@ -322,25 +264,10 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
 
     return (
         <div className="dashboard-body">
-            <div style={{ 
-                marginBottom: '24px', 
-                padding: '24px 28px', 
-                background: `linear-gradient(135deg, ${config.color}15, ${config.color}05)`, 
-                border: `1px solid ${config.color}25`, 
-                borderRadius: '16px', 
-                borderLeft: `6px solid ${config.color}`,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
-                backdropFilter: 'blur(10px)'
-            }}>
-                <div style={{ fontSize: '11px', fontWeight: 800, color: config.color, letterSpacing: '0.15em', marginBottom: '6px', textTransform: 'uppercase' }}>
-                    SECURE DEAL ROOM
-                </div>
-                <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: 'var(--text)' }}>
-                    {config.label} Intelligence Center
-                </h2>
-                <p style={{ margin: '6px 0 0', color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.5' }}>
-                    {config.description}
-                </p>
+            <div style={{ marginBottom: '24px', padding: '24px 28px', background: `linear-gradient(135deg, ${config.color}15, ${config.color}05)`, border: `1px solid ${config.color}25`, borderRadius: '16px', borderLeft: `6px solid ${config.color}`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)', backdropFilter: 'blur(10px)' }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: config.color, letterSpacing: '0.15em', marginBottom: '6px', textTransform: 'uppercase' }}>SECURE DEAL ROOM</div>
+                <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: 'var(--text)' }}>{config.label} Intelligence Center</h2>
+                <p style={{ margin: '6px 0 0', color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.5' }}>{config.description}</p>
             </div>
 
             <div className="input-panel glass">
@@ -349,14 +276,7 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                     <div className="input-group">
                         <label>Company Ticker / Name</label>
                         <div style={{ position: 'relative' }}>
-                            <input
-                                type="text"
-                                value={company}
-                                onChange={e => setCompany(e.target.value)}
-                                onKeyDown={e => e.key === 'Enter' && handleAnalyze()}
-                                placeholder={`e.g. RELIANCE.NS or Apple`}
-                                style={{ paddingRight: (liveQuote && !isNaN(parseFloat(liveQuote.price))) ? '130px' : '15px' }}
-                            />
+                            <input type="text" value={company} onChange={e => setCompany(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAnalyze()} placeholder={`e.g. RELIANCE.NS or Apple`} style={{ paddingRight: (liveQuote && !isNaN(parseFloat(liveQuote.price))) ? '130px' : '15px' }} />
                             {liveQuote && (() => {
                                 const priceVal = parseFloat(liveQuote.price);
                                 if (isNaN(priceVal)) return null;
@@ -382,8 +302,7 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                             })()}
                         </div>
                     </div>
-                    <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading}
-                        style={{ background: config.color, borderColor: config.color }}>
+                    <button className="btn btn-primary" onClick={handleAnalyze} disabled={loading} style={{ background: config.color, borderColor: config.color }}>
                         <Zap size={18} /> Analyze {config.label}
                     </button>
                 </div>
@@ -399,31 +318,16 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
             {result && (
                 <div className="results-grid" style={{ marginTop: '24px' }}>
                     {show('overview') && (
-                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
-                            <h4><FileText size={18} style={{ color: config.color }} /> Deal Overview</h4>
-                            <p>{result.analysis?.overview}</p>
-                        </div>
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}><h4><FileText size={18} style={{ color: config.color }} /> Deal Overview</h4><p>{result.analysis?.overview}</p></div>
                     )}
                     {show('industry') && (
-                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
-                            <h4><Globe size={18} style={{ color: config.color }} /> Industry Landscape</h4>
-                            <p>{result.analysis?.industry}</p>
-                        </div>
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}><h4><Globe size={18} style={{ color: config.color }} /> Industry Landscape</h4><p>{result.analysis?.industry}</p></div>
                     )}
                     {show('news') && liveNews?.headlines?.length > 0 && (
                         <div className="card glass full-width" style={{ borderLeft: `4px solid ${config.color}` }}>
                             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px', flexWrap:'wrap', gap:'10px' }}>
                                 <h4><Zap size={18} style={{ color: config.color }} /> Market News</h4>
-                                <span style={{ 
-                                    background: liveNews.sentiment === 'Bullish' ? '#dcfce7' : (liveNews.sentiment === 'Bearish' ? '#fee2e2' : '#f1f5f9'),
-                                    color: liveNews.sentiment === 'Bullish' ? '#166534' : (liveNews.sentiment === 'Bearish' ? '#991b1b' : '#475569'),
-                                    padding:'4px 12px', 
-                                    borderRadius:'100px', 
-                                    fontSize:'11px', 
-                                    fontWeight:'800' 
-                                }}>
-                                    {liveNews.sentiment?.toUpperCase()} SENTIMENT
-                                </span>
+                                <span style={{ background: liveNews.sentiment === 'Bullish' ? '#dcfce7' : (liveNews.sentiment === 'Bearish' ? '#fee2e2' : '#f1f5f9'), color: liveNews.sentiment === 'Bullish' ? '#166534' : (liveNews.sentiment === 'Bearish' ? '#991b1b' : '#475569'), padding:'4px 12px', borderRadius:'100px', fontSize:'11px', fontWeight:'800' }}>{liveNews.sentiment?.toUpperCase()} SENTIMENT</span>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {liveNews.headlines.map((h, i) => (
@@ -438,42 +342,16 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                         </div>
                     )}
                     {show('rationale') && (
-                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
-                            <h4><TrendingUp size={18} style={{ color: config.color }} /> Investment Rationale</h4>
-                            {Array.isArray(result.analysis?.rationale)
-                                ? <ul style={{ paddingLeft:'16px', margin:0 }}>{result.analysis.rationale.map((r,i)=><li key={i} style={{ marginBottom:'4px' }}>{r}</li>)}</ul>
-                                : <p>{result.analysis?.rationale}</p>
-                            }
-                        </div>
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}><h4><TrendingUp size={18} style={{ color: config.color }} /> Investment Rationale</h4>{Array.isArray(result.analysis?.rationale) ? <ul style={{ paddingLeft:'16px', margin:0 }}>{result.analysis.rationale.map((r,i)=><li key={i} style={{ marginBottom:'4px' }}>{r}</li>)}</ul> : <p>{result.analysis?.rationale}</p>}</div>
                     )}
                     {show('risks') && (
-                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}>
-                            <h4><Shield size={18} style={{ color: config.color }} /> Key Risks</h4>
-                            {Array.isArray(result.analysis?.risks)
-                                ? <ul style={{ paddingLeft:'16px', margin:0 }}>{result.analysis.risks.map((r,i)=><li key={i} style={{ marginBottom:'4px' }}>{r}</li>)}</ul>
-                                : <p>{result.analysis?.risks}</p>
-                            }
-                        </div>
+                        <div className="card glass clickable-card" style={{ borderTop: `3px solid ${config.color}` }}><h4><Shield size={18} style={{ color: config.color }} /> Key Risks</h4>{Array.isArray(result.analysis?.risks) ? <ul style={{ paddingLeft:'16px', margin:0 }}>{result.analysis.risks.map((r,i)=><li key={i} style={{ marginBottom:'4px' }}>{r}</li>)}</ul> : <p>{result.analysis?.risks}</p>}</div>
                     )}
                     {show('chart') && result.history_data?.length > 0 && (
-                        <PriceChartCard 
-                            company={result.company} 
-                            initialData={result.history_data} 
-                            currencyInfo={currencyInfo} 
-                            rates={rates} 
-                            initialStockCurrency={result.currency}
-                        />
+                        <PriceChartCard company={result.company} initialData={result.history_data} currencyInfo={currencyInfo} rates={rates} initialStockCurrency={result.currency} />
                     )}
                     {show('comps') && result.comps?.length > 0 && (
-                        <div className="card glass full-width" style={{ borderTop: `3px solid ${config.color}` }}>
-                            <h4><Zap size={18} style={{ color: config.color }} /> Comparable Peer Group</h4>
-                            <div className="table-container">
-                                <table>
-                                    <thead><tr>{result.comps[0]?.map((h,i)=><th key={i}>{h}</th>)}</tr></thead>
-                                    <tbody>{result.comps.slice(1).map((row,i)=><tr key={i}>{row.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <div className="card glass full-width" style={{ borderTop: `3px solid ${config.color}` }}><h4><Zap size={18} style={{ color: config.color }} /> Comparable Peer Group</h4><div className="table-container"><table><thead><tr>{result.comps[0]?.map((h,i)=><th key={i}>{h}</th>)}</tr></thead><tbody>{result.comps.slice(1).map((row,i)=><tr key={i}>{row.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody></table></div></div>
                     )}
                     {show('benchmarking') && result.benchmarking_data?.length > 0 && (
                         <div className="card glass full-width">
@@ -484,46 +362,12 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
                                     <button className={`btn-tab ${chartTab === 'ev' ? 'active' : ''}`} onClick={() => setChartTab('ev')} style={{ padding: '4px 12px', fontSize: '12px', borderRadius: '4px', background: chartTab === 'ev' ? '#fff' : 'transparent', border: '1px solid transparent', fontWeight: 700, cursor:'pointer' }}>EV/EBITDA</button>
                                 </div>
                             </div>
-                            <div style={{ height:'380px' }}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={result.benchmarking_data}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                                        <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={10} tickLine={false} axisLine={false} />
-                                        <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-                                        <Tooltip 
-                                            contentStyle={{ background:'#fff', border: '1px solid var(--border-strong)', borderRadius:'8px' }} 
-                                            itemStyle={{ color: config.color }}
-                                            cursor={{ fill: 'rgba(0,0,0,0.02)' }}
-                                        />
-                                        <Bar dataKey={chartTab === 'pe' ? 'pe_ratio' : 'ev_ebitda'} radius={[4,4,0,0]}>
-                                            {result.benchmarking_data.map((_,i)=><Cell key={i} fill={i===0 ? config.color : 'var(--border-strong)'} />)}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '12px', textAlign: 'center' }}>
-                                Selected color bar indicates Target Company ({result.company})
-                            </p>
+                            <div style={{ height:'380px' }}><ResponsiveContainer width="100%" height="100%"><BarChart data={result.benchmarking_data}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="name" stroke="var(--text-muted)" fontSize={10} tickLine={false} axisLine={false} /><YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} /><Tooltip contentStyle={{ background:'#fff', border: '1px solid var(--border-strong)', borderRadius:'8px' }} itemStyle={{ color: config.color }} cursor={{ fill: 'rgba(0,0,0,0.02)' }} /><Bar dataKey={chartTab === 'pe' ? 'pe_ratio' : 'ev_ebitda'} radius={[4,4,0,0]}>{result.benchmarking_data.map((_,i)=><Cell key={i} fill={i===0 ? config.color : 'var(--border-strong)'} />)}</Bar></BarChart></ResponsiveContainer></div>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '12px', textAlign: 'center' }}>Selected color bar indicates Target Company ({result.company})</p>
                         </div>
                     )}
                     {show('banks') && result.banks?.length > 0 && (
-                        <div className="card glass full-width" style={{ borderTop: `3px solid ${config.color}` }}>
-                            <h4><TrendingUp size={18} style={{ color: config.color }} /> IB Bank Matrix</h4>
-                            <div className="table-container">
-                                <table>
-                                    <thead><tr><th>Bank</th><th>ECM Score</th><th>Probability</th></tr></thead>
-                                    <tbody>
-                                        {result.banks.map((b,i)=>(
-                                            <tr key={i}>
-                                                <td>{b.bank}</td>
-                                                <td>{b.score}</td>
-                                                <td style={{ color: b.probability==='High'?'#10b981':b.probability==='Medium'?'#f59e0b':'#ef4444' }}>{b.probability}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <div className="card glass full-width" style={{ borderTop: `3px solid ${config.color}` }}><h4><TrendingUp size={18} style={{ color: config.color }} /> IB Bank Matrix</h4><div className="table-container"><table><thead><tr><th>Bank</th><th>ECM Score</th><th>Probability</th></tr></thead><tbody>{result.banks.map((b,i)=>(<tr key={i}><td>{b.bank}</td><td>{b.score}</td><td style={{ color: b.probability==='High'?'#10b981':b.probability==='Medium'?'#f59e0b':'#ef4444' }}>{b.probability}</td></tr>))}</tbody></table></div></div>
                     )}
                 </div>
             )}
@@ -531,30 +375,22 @@ const DealRoomView = ({ dealKey, currencyInfo, setCurrencyInfo, rates }) => {
     );
 };
 
-// ── MAIN DASHBOARD COMPONENT ────────────────────────────────────────────
 const Dashboard = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: 'guest', name: 'Guest User', role: 'user' });
     const [view, setView] = useState('ma');
     const [authMode, setAuthMode] = useState('signin');
-
-    // Auth State
+    const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
-    // Live Data State
     const [liveQuote, setLiveQuote] = useState(null);
     const [liveNews, setLiveNews] = useState(null);
-    const [chartTab, setChartTab] = useState('pe'); // 'pe' or 'ev'
-
-    // Analyzer State
+    const [chartTab, setChartTab] = useState('pe');
     const [company, setCompany] = useState('');
     const [dealType, setDealType] = useState('M&A');
     const [loading, setLoading] = useState(false);
     const [latestData, setLatestData] = useState(null);
-
-    // Currency State
     const [currencyInfo, setCurrencyInfo] = useState({ symbol: '$', code: 'USD' });
     const [rates, setRates] = useState({ USD: 1 });
 
@@ -577,38 +413,21 @@ const Dashboard = () => {
             localStorage.removeItem('db_token');
             setUser({ username: 'guest', name: 'Guest User', role: 'user' });
         }
-
         const savedAnalysis = localStorage.getItem('latest_analysis');
-        if (savedAnalysis) {
-            setLatestData(JSON.parse(savedAnalysis));
-        }
+        if (savedAnalysis) setLatestData(JSON.parse(savedAnalysis));
     }, []);
 
     useEffect(() => {
-        if (latestData) {
-            localStorage.setItem('latest_analysis', JSON.stringify(latestData));
-        }
+        if (latestData) localStorage.setItem('latest_analysis', JSON.stringify(latestData));
     }, [latestData]);
 
     const googleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
-                const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-                }).then(res => res.json());
-
-                const userData = {
-                    username: userInfo.email,
-                    name: userInfo.name,
-                    picture: userInfo.picture,
-                    isGoogle: true
-                };
-
+                const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }).then(res => res.json());
+                const userData = { username: userInfo.email, name: userInfo.name, picture: userInfo.picture, isGoogle: true };
                 const res = await api.googleLogin(userData.username, userData.name);
-                if (res.data.token) {
-                    localStorage.setItem('db_token', res.data.token);
-                }
-
+                if (res.data.token) localStorage.setItem('db_token', res.data.token);
                 localStorage.setItem('db_user', JSON.stringify(userData));
                 setUser(userData);
             } catch (err) {
@@ -634,9 +453,7 @@ const Dashboard = () => {
             } else {
                 setError(res.data.message || 'Invalid credentials');
             }
-        } catch (e) {
-            setError('Error connecting to server');
-        }
+        } catch (e) { setError('Error connecting to server'); }
     };
 
     const handleSignup = async () => {
@@ -657,12 +474,8 @@ const Dashboard = () => {
                     }
                 }
                 setError('');
-            } else {
-                setError(res.data.message || 'Signup failed');
-            }
-        } catch (e) {
-            setError('Error connecting to server');
-        }
+            } else { setError(res.data.message || 'Signup failed'); }
+        } catch (e) { setError('Error connecting to server'); }
     };
 
     const handleSignOut = () => {
@@ -670,6 +483,7 @@ const Dashboard = () => {
         localStorage.removeItem('db_token');
         localStorage.removeItem('latest_analysis');
         setUser({ username: 'guest', name: 'Guest User', role: 'user' });
+        setMobileSidebarOpen(false);
         navigate('/');
     };
 
@@ -719,67 +533,8 @@ const Dashboard = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        } catch (e) {
-            alert("Download failed");
-        }
+        } catch (e) { alert("Download failed"); }
     };
-
-    if (!user) {
-        return (
-            <div id="login-screen" >
-                <div className="login-container">
-                    <h1 className="login-brand" style={{ textAlign: 'center' }}>DB Advisory & Research</h1>
-                    <div className="auth-card glass" style={{ padding: '30px 50px 40px 40px' }}>
-                        <h2 className="auth-title" style={{ textAlign: 'center' }}>{authMode === 'signin' ? 'Welcome back' : 'Create account'}</h2>
-                        <p className="auth-subtitle" style={{ textAlign: 'center' }}>
-                            {authMode === 'signin' ? 'Sign in to your dashboard.' : 'Start analyzing deals in seconds.'}
-                        </p>
-
-                        <div className="input-group">
-                            <label>Email</label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Username@gmail.com"
-                            />
-                        </div>
-                        <div className="input-group">
-                            <label>Password</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••••••"
-                            />
-                        </div>
-
-                        <button className="btn btn-primary full-width" style={{ marginTop: '20px', padding: '10px' }} onClick={authMode === 'signin' ? handleLogin : handleSignup}>
-                            {authMode === 'signin' ? 'Sign in' : 'Sign up'}
-                        </button>
-
-                        <div className="auth-divider">
-                            <span>or</span>
-                        </div>
-
-                        <button className="btn btn-google full-width" onClick={() => googleLogin()}>
-                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '18px', marginRight: '10px' }} />
-                            Sign in with Google
-                        </button>
-
-                        <p className="auth-footer">
-                            {authMode === 'signin' ? (
-                                <>Don't have an account? <a onClick={() => setAuthMode('signup')}>Sign up</a></>
-                            ) : (
-                                <>Already have an account? <a onClick={() => setAuthMode('signin')}>Sign in</a></>
-                            )}
-                        </p>
-                        {error && <div className="error-msg">{error}</div>}
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     const navItems = [
         { label: "Home", href: "#", onClick: () => navigate('/') },
@@ -790,11 +545,65 @@ const Dashboard = () => {
         { label: "Contact", href: "#", onClick: () => navigate('/contact') }
     ];
 
+    const sidebarMenu = (
+        <aside className={`db-sidebar glass ${mobileSidebarOpen ? 'mobile-open' : ''}`}>
+            <nav className="sidebar-nav">
+                <div className="nav-item" style={{ cursor: 'default', pointerEvents: 'none', background: 'transparent', opacity: 0.7 }}>
+                    <LayoutDashboard size={20} /> Deal Analyzer
+                </div>
+                <div style={{ marginTop: '24px', padding: '0 8px' }}>
+                    <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px', paddingLeft: '8px' }}>DEAL ROOMS</div>
+                    {[ { key: 'ma', label: 'M&A', icon: <Building2 size={16} /> }, { key: 'ipo', label: 'IPO', icon: <TrendingUp size={16} /> }, { key: 'lbo', label: 'LBO', icon: <BarChart4 size={16} /> }, { key: 'restr', label: 'Restructuring', icon: <RefreshCw size={16} /> }, { key: 'ecm', label: 'ECM', icon: <Zap size={16} /> }, { key: 'dcm', label: 'DCM', icon: <FileText size={16} /> }, { key: 'pf', label: 'Project Finance', icon: <Globe size={16} /> }, { key: 'valuation', label: 'Valuation', icon: <TrendingUp size={16} /> }, ].map(({ key, label, icon }) => (
+                        <a key={key} className={`nav-item ${view === key ? 'active' : ''}`} onClick={() => { setView(key); setMobileSidebarOpen(false); }} style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                            {icon} {label}
+                        </a>
+                    ))}
+                </div>
+            </nav>
+            <div className="sidebar-footer" style={{ marginTop: 'auto' }}>
+                {user.username !== 'guest' ? (
+                    <>
+                        <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Logged in as <strong>{user.username}</strong></p>
+                        <button className="btn btn-secondary full-width" style={{ marginTop: '10px' }} onClick={handleSignOut}>Sign Out</button>
+                    </>
+                ) : (
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Platform Access: <strong>Public</strong></p>
+                )}
+            </div>
+        </aside>
+    );
+
+    if (!user) {
+        return (
+            <div id="login-screen" >
+                <div className="login-container">
+                    <h1 className="login-brand" style={{ textAlign: 'center' }}>DB Advisory & Research</h1>
+                    <div className="auth-card glass" style={{ padding: '30px 50px 40px 40px' }}>
+                        <h2 className="auth-title" style={{ textAlign: 'center' }}>{authMode === 'signin' ? 'Welcome back' : 'Create account'}</h2>
+                        <p className="auth-subtitle" style={{ textAlign: 'center' }}>{authMode === 'signin' ? 'Sign in to your dashboard.' : 'Start analyzing deals in seconds.'}</p>
+                        <div className="input-group"><label>Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Username@gmail.com" /></div>
+                        <div className="input-group"><label>Password</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••••••" /></div>
+                        <button className="btn btn-primary full-width" style={{ marginTop: '20px', padding: '10px' }} onClick={authMode === 'signin' ? handleLogin : handleSignup}>{authMode === 'signin' ? 'Sign in' : 'Sign up'}</button>
+                        <div className="auth-divider"><span>or</span></div>
+                        <button className="btn btn-google full-width" onClick={() => googleLogin()}><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '18px', marginRight: '10px' }} />Sign in with Google</button>
+                        <p className="auth-footer">{authMode === 'signin' ? <>Don't have an account? <a onClick={() => setAuthMode('signup')}>Sign up</a></> : <>Already have an account? <a onClick={() => setAuthMode('signin')}>Sign in</a></>}</p>
+                        {error && <div className="error-msg">{error}</div>}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', width: '100%', overflowX: 'hidden' }}>
             <header className="landing-header">
-                <div className="logo" style={{ cursor: 'pointer', gap: '8px' }} onClick={() => navigate('/')}>
-                    <h2 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>DB ADVISORY</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button aria-label="Open menu" className="btn" style={{ display: 'none', width: 'auto', minWidth: '40px', padding: '8px 10px', background: '#f8fafc', border: '1px solid var(--border)', color: 'var(--primary)' }} onClick={() => setMobileSidebarOpen(v => !v)}>
+                        {mobileSidebarOpen ? <X size={18} /> : <Menu size={18} />}
+                    </button>
+                    <div className="logo" style={{ cursor: 'pointer', gap: '8px' }} onClick={() => navigate('/')}>
+                        <h2 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '-0.5px' }}>DB ADVISORY</h2>
+                    </div>
                 </div>
                 <GooeyNav items={navItems} initialActiveIndex={-1} />
                 <div className="header-actions">
@@ -804,58 +613,12 @@ const Dashboard = () => {
                 </div>
             </header>
 
+            {mobileSidebarOpen && <div className="menu-backdrop" onClick={() => setMobileSidebarOpen(false)} />}
             <div className="db-layout">
-                <aside className="db-sidebar glass">
-                    <nav className="sidebar-nav">
-                        <div className="nav-item" style={{ cursor: 'default', pointerEvents: 'none', background: 'transparent', opacity: 0.7 }}>
-                            <LayoutDashboard size={20} /> Deal Analyzer
-                        </div>
-                        <div style={{ marginTop: '24px', padding: '0 8px' }}>
-                            <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px', paddingLeft: '8px' }}>
-                                DEAL ROOMS
-                            </div>
-                            {[
-                                { key: 'ma',       label: 'M&A',            icon: <Building2 size={16} /> },
-                                { key: 'ipo',      label: 'IPO',             icon: <TrendingUp size={16} /> },
-                                { key: 'lbo',      label: 'LBO',             icon: <BarChart4 size={16} /> },
-                                { key: 'restr',    label: 'Restructuring',   icon: <RefreshCw size={16} /> },
-                                { key: 'ecm',      label: 'ECM',             icon: <Zap size={16} /> },
-                                { key: 'dcm',      label: 'DCM',             icon: <FileText size={16} /> },
-                                { key: 'pf',       label: 'Project Finance', icon: <Globe size={16} /> },
-                                { key: 'valuation',label: 'Valuation',       icon: <TrendingUp size={16} /> },
-                            ].map(({ key, label, icon }) => (
-                                <a
-                                    key={key}
-                                    className={`nav-item ${view === key ? 'active' : ''}`}
-                                    onClick={() => setView(key)}
-                                    style={{ paddingLeft: '20px', fontSize: '13px' }}
-                                >
-                                    {icon} {label}
-                                </a>
-                            ))}
-                        </div>
-                    </nav>
-                    <div className="sidebar-footer" style={{ marginTop: 'auto' }}>
-                        {user.username !== 'guest' ? (
-                            <>
-                                <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Logged in as <strong>{user.username}</strong></p>
-                                <button className="btn btn-secondary full-width" style={{ marginTop: '10px' }} onClick={handleSignOut}>Sign Out</button>
-                            </>
-                        ) : (
-                            <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Platform Access: <strong>Public</strong></p>
-                        )}
-                    </div>
-                </aside>
-
+                {sidebarMenu}
                 <main className="db-main">
                     {Object.keys(DEAL_CONFIGS).includes(view) && (
-                        <DealRoomView
-                            key={view}
-                            dealKey={view}
-                            currencyInfo={currencyInfo}
-                            setCurrencyInfo={setCurrencyInfo}
-                            rates={rates}
-                        />
+                        <DealRoomView key={view} dealKey={view} currencyInfo={currencyInfo} setCurrencyInfo={setCurrencyInfo} rates={rates} />
                     )}
                 </main>
             </div>
